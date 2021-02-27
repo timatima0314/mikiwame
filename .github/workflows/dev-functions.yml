@@ -1,0 +1,40 @@
+name: Dev Cloud Functions
+
+on:
+  push:
+    branches:
+    - dev
+    paths:
+    - 'functions/**'
+    - '!functions/patches/**'
+
+defaults:
+  run:
+    working-directory: functions
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - run: npm ci
+    - name: set credential file
+      run: echo "$GOOGLE_APPLICATION_CREDENTIALS" > credential.json
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+    - run: npm test
+      env:
+        FIREBASE_CONFIG_TEST: ${{ secrets.FIREBASE_CONFIG_TEST }}
+        TEST_MEMBER_ID: ${{ secrets.TEST_MEMBER_ID }}
+    - name: install firebase-tools
+      run: npm install -g firebase-tools
+    - name: Deploy functions
+      # devブランチにないfunctionsがデプロイされていると「削除しますか」の確認されるが、CI環境だとNoと答えられないので、エラーがでる。
+      # しかし、echo "n\n"を仕込んでおくことでNoと答えることができる
+      # ref) https://github.com/firebase/firebase-tools/issues/877#issuecomment-550976371
+      run: echo "n\n" | firebase deploy --only functions --interactive --token=${{ secrets.FIREBASE_TOKEN }} --project=dev
+      env:
+        RESOURCE_DIR: functions

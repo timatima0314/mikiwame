@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	function isSignedIn() {
+    	return request.auth.uid != null;
+		}
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    match /admins/{adminId} {
+      allow get: if isSignedIn();
+    }
+    match /admin_configs/{admin_config_id} {
+      allow get, update: if isAdmin();
+    }
+    match /risk_eyes_billing/{YYYYMM} {
+      allow get, create, update: if isAdmin();
+    }
+    
+    match /withdrawal_questionnaire/{withdrawal_questionnaire_id} {
+      allow get, create, update: if isSignedIn();
+      allow list: if isAdmin();
+    }
+
+    match /company_version/{version}/companies/{companyId} {
+      // ログインしているcompanyとアクセスしようとしているcompanyが同一か
+      function isRootAccount() {
+        return isSignedIn() && get(/databases/$(database)/documents/company_version/$(version)/companies/$(companyId)).data.uid == request.auth.uid;
+      }
+      function isSubAccount() {
+        return isSignedIn() && request.auth.uid in get(/databases/$(database)/documents/company_version/$(version)/companies/$(companyId)).data.subAccountUids;
+      }
+      allow create: if isSignedIn();
+      allow get, update: if isAdmin() || isRootAccount() || isSubAccount();
+      allow list: if isAdmin();
+
+      match /templateQuestions/{templateId} {
+        allow read, write: if isRootAccount() || isSubAccount();
+      }
+      match /subAccounts/{subAccountId} {
+        // subAcconutsとかのコレクション
+        allow read, write: if isRootAccount() || isSubAccount();
+      }
+
+      match /talents/{talentId} {
+        allow read, write: if isRootAccount() || isSubAccount();
+
+        match /referees/{refereeId} {
+          allow read: if isRootAccount() || isSubAccount();
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,206 @@
+@import './variables.scss';
+@import './mixin.scss';
+@import './transition.scss';
+@import './element-ui.scss';
+@import './sidebar.scss';
+@import './login.sass';
+
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: $color-back
+}
+
+label {
+  font-weight: 700;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#app {
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+div:focus {
+  outline: none;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+
+.container {
+  width: 90%;
+  @media (min-width: 768px) {
+    width: 80%;
+  }
+  margin: 2rem auto;
+}
+
+
+// main-container global css
+.app-container {
+  padding: 20px;
+}
+
+// 利用規約などの表示に使う
+.scrollable-container {
+  height: 23rem;
+  font-size: .7rem;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  border: .1rem solid #dadada;
+  background-color: #f6f7fa;
+  overflow-y: auto;
+}
+
+// input type="number"の矢印を消す
+// for chrome, safari
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+// for firefox, ie
+input[type="number"] {
+  -moz-appearance:textfield;
+}
+
+// MiKiWaMe Pink
+.el-button--primary {
+  background-color: $color-primary;
+  color: white;
+  border: none;
+  &:hover, &:focus {
+    background-color: $color-primary-light;
+  }
+  &.is-plain {
+    background-color: $color-primary-light;
+    color: white;
+    border: none;
+    &:hover, &:focus {
+      background-color: $color-primary;
+    }
+  }
+}
+
+// MiKiWaMe Navy
+.el-button--info {
+   background-color: $color-info;
+   color: white;
+   border: none;
+   &:hover {
+     background-color: $color-info;
+   }
+   &.is-plain {
+     background-color: $color-info-light;
+     color: white;
+     border: none;
+     &:hover {
+       background-color: $color-info;
+     }
+   }
+ }
+
+// MiKiWaMe Green
+.el-button--success {
+  background-color: $color-success;
+  color: white;
+  border: none;
+  &:hover {
+    background-color: $color-success;
+  }
+  &.is-plain {
+    background-color: $color-success-light;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: $color-success;
+    }
+  }
+}
+
+// MiKiWaMe Blue
+.el-button--secondary {
+  background-color: $color-secondary;
+  color: white;
+  border: none;
+  &:hover {
+    background-color: $color-secondary;
+  }
+  &.is-plain {
+    background-color: $color-secondary-light;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: $color-secondary;
+    }
+  }
+}
+
+.el-button--default {
+  &:hover {
+    background-color: #e5e5ed;
+    color: #606266;
+  }
+}
+
+.el-tabs__active-bar {
+  background-color: #d98ace;
+}
+
+.el-tabs__item {
+  &.is-active{
+    color: #d98ace;
+  }
+  &:hover {
+    color: #d98ace;
+  }
+}
+
+.el-radio__inner {
+  &:hover {
+    border-color: $mainButton;
+  }
+}
+.el-radio__input.is-checked {
+  & .el-radio__inner {
+    background-color: $mainButton;
+    border-color: $mainButton;
+  }
+  &+.el-radio__label {
+    color: $mainButton;
+  }
+}

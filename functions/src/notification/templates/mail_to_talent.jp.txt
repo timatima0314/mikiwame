@@ -1,0 +1,30 @@
+<%= mailI18n.t('honorificName', { name: talentName }) %>
+
+<%= mailI18n.t('openingSentence') %>
+
+<%= mailI18n.t('requestForReferenceCheck', { companyName: companyName, honorific: mailI18n.t('honorific'), talentName: talentName }) %>
+
+<%= mailI18n.t('referenceCheckExplanation1') %>
+<%= mailI18n.t('referenceCheckExplanation2') %>
+
+<%= mailI18n.t('averageTimeRequired', { minute: estimatedMinutes }) %>
+<%= mailI18n.t('responseWillBeSent') %>
+
+<%= mailI18n.t('deadline', { deadline: deadline }) %>
+
+<%= mailI18n.t('requiredSteps') %>
+1. <%= mailI18n.t('flowRegister') %>
+2. <%= mailI18n.t('flowPublishing') %>
+3. <%= mailI18n.t('flowSend') %>
+
+<%= mailI18n.t('linkToTalentPage') %>
+<%= linkToTalentPage %>
+
+<%= mailI18n.t('linkUnsuclibe') %>
+<%= linkToUnsubscribe %>
+
+-------------------------------------
+HRRT Inc.
+03-1234-1234
+info@mikiwame-p.jp
+© 2020 HRRT Inc. All rights reserved.

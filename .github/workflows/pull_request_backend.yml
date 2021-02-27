@@ -1,0 +1,33 @@
+name: Pull Request Backend
+
+on:
+  push:
+    pull_request:
+    paths-ignore:
+    - 'src/**'
+    - '.github/**'
+    - 'README.md'
+    - 'docs/**'
+
+defaults:
+  run:
+    working-directory: functions
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - run: npm ci
+    - run: npm run lint:ci
+    - name: set credential file
+      run: echo "$GOOGLE_APPLICATION_CREDENTIALS" > credential.json
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+    - run: npm test
+      env:
+        FIREBASE_CONFIG_TEST: ${{ secrets.FIREBASE_CONFIG_TEST }}
+        TEST_MEMBER_ID: ${{ secrets.TEST_MEMBER_ID }}

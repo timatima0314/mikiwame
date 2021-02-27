@@ -1,0 +1,15 @@
+<%= subAccountName %>様
+
+MiKiWaMe Point 運営事務局
+
+<%= companyName %>様より、<%= subAccountName %>様のアカウントが新規作成されました。
+
+ご利用を開始するには、以下のリンクよりパスワードを設定してください。
+パスワードが設定されるまでは、アカウントは有効化されません。
+<%= linkToPasswordSettingPage %>
+
+-------------------------------------
+HRRT Inc.
+03-1234-1234
+info@mikiwame-p.jp
+© 2020 HRRT Inc. All rights reserved.
