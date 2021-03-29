@@ -73,7 +73,7 @@ export const regainTrustPageMixin = {
       if (err) this.$rollbar.error(err)
       this.$notify({
         title: 'Error',
-        message: '回答の送信に失敗しました。時間をおいて再度お試しください。',
+        message: '回答の送信に失敗しました。通信環境を確認したうえで再度お試しください。',
         type: 'error'
       })
     }
