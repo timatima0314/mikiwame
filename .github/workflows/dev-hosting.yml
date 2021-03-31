@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - dev
-    paths-ignore:
-      - "functions/**"
-      - ".github/**"
-      - "README.md"
-      - "docs/**"
 
 jobs:
   build:
