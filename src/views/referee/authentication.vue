@@ -174,7 +174,7 @@ export default {
         .catch((err) => {
           this.$rollbar.error(err)
           this.$message({
-            message: this.notifyI18n.t('message.errorPleaseAgain'),
+            message: this.notifyI18n.t('message.errorPhoneRegisteredCheck'),
             type: 'error'
           })
           this.loading = false
@@ -214,7 +214,9 @@ export default {
             })
           } else {
             this.$message({
-              message: this.notifyI18n.t('message.errorPleaseAgain'),
+              message: this.notifyI18n.t('message.errorSmsAuthentication', {
+                message: err.code
+              }),
               type: 'error'
             })
             this.$rollbar.error(err)
@@ -256,7 +258,9 @@ export default {
             })
           } else {
             this.$message({
-              message: this.notifyI18n.t('message.errorPleaseAgain'),
+              message: this.notifyI18n.t('message.errorSmsAuthentication', {
+                message: err.code
+              }),
               type: 'error'
             })
             this.$rollbar.error(err)
