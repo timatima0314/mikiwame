@@ -398,6 +398,8 @@ const messages = {
         errorSaving: '保存に失敗しました。通信環境を確認したうえで再度お試しください。',
         inputIsIncomplete: '入力に不備がございます',
         errorPleaseAgain: 'エラーが発生しました。通信環境を確認したうえで再度お試しください。',
+        errorSmsAuthentication: 'SMSの認証でエラーが発生しました。通信環境を確認したうえで再度お試しください。',
+        errorPhoneRegisteredCheck: '電話番号が登録済みか確認する過程でエラーが発生しました。',
         errorPleaseAuthenticateAgain: 'エラーが発生しました。再度認証を行い回答の送信をお願いします。'
       }
     },
@@ -410,6 +412,8 @@ const messages = {
         errorSaving: 'Failed to save. Please try again in a few minutes.',
         inputIsIncomplete: 'Input is incomplete',
         errorPleaseAgain: 'An error has occurred. Please wait a few minutes and try again.',
+        errorSmsAuthentication: 'An error has occurred. Please wait a few minutes and try again.', // TODO
+        errorPhoneRegisteredCheck: 'An error has occurred. ', // TODO
         errorPleaseAuthenticateAgain: 'An error has occurred. Please authenticate again and submit your answer.'
       }
     },
@@ -422,6 +426,8 @@ const messages = {
         errorSaving: '保存失敗，請再待幾分鐘後重新嘗試',
         inputIsIncomplete: '你的输入不完整。',
         errorPleaseAgain: '发生了一个错误。 请稍等片刻再试。',
+        errorSmsAuthentication: '发生了一个错误。 请稍等片刻再试。', // TODO
+        errorPhoneRegisteredCheck: '发生了一个错误。', // TODO
         errorPleaseAuthenticateAgain: '发生了一个错误。 请再次认证并发送您的答案。'
       }
     }
