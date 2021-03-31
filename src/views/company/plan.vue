@@ -1,6 +1,9 @@
 <template>
   <el-card v-loading="loading" class="container">
-    <img src="@/assets/mikiwame_point_plan.png" style="vertical-align: middle; height: 80px;">
+    <img
+      src="@/assets/mikiwame_point_plan.png"
+      style="vertical-align: middle; height: 80px"
+    >
     <table class="plan-table">
       <thead>
         <tr>
@@ -29,10 +32,21 @@
             </el-button>
           </td>
           <td class="non">
-            <el-button type="primary" class="order-button plan-common" :disabled="planStatus !== PLAN_STATUSES.LIGHT" @click="orderPlanUpgrade">
-              <b v-if="planStatus === PLAN_STATUSES.LIGHT">このプランを申し込む</b>
-              <b v-else-if="planStatus === PLAN_STATUSES.ORDERING_STANDARD">申請中</b>
-              <b v-else-if="planStatus === PLAN_STATUSES.STANDARD">現在のプラン</b>
+            <el-button
+              type="primary"
+              class="order-button plan-common"
+              :disabled="planStatus !== PLAN_STATUSES.LIGHT"
+              @click="orderPlanUpgrade"
+            >
+              <b
+                v-if="planStatus === PLAN_STATUSES.LIGHT"
+              >このプランを申し込む</b>
+              <b
+                v-else-if="planStatus === PLAN_STATUSES.ORDERING_STANDARD"
+              >申請中</b>
+              <b
+                v-else-if="planStatus === PLAN_STATUSES.STANDARD"
+              >現在のプラン</b>
             </el-button>
           </td>
         </tr>
@@ -56,11 +70,13 @@
       </p>
       <p>
         ※反社チェックの従量課金について<br>
-        ・新聞<span style="margin-left: 1em;">1検索：450円</span><br>
+        ・新聞<span style="margin-left: 1em">1検索：450円</span><br>
         <span style="margin-left: 1em">検索後の閲覧ボタンを押すと</span><br>
-        <span style="margin-left: 1em;white-space: pre;">見出し</span><span style="margin-left: 1em;">記事5円（全国紙）10円（地方紙）</span><br>
-        <span style="margin-left: 1em">本文閲覧料</span><span style="margin-left: 1em;">1記事100円（全国紙）150円（地方紙）課金</span><br>
-        ・WEB<span style="margin-left: 1em;">1検索料：450円</span><br>
+        <span style="margin-left: 1em; white-space: pre">見出し</span><span style="margin-left: 1em">記事5円（全国紙）10円（地方紙）</span><br>
+        <span style="margin-left: 1em">本文閲覧料</span><span
+          style="margin-left: 1em"
+        >1記事100円（全国紙）150円（地方紙）課金</span><br>
+        ・WEB<span style="margin-left: 1em">1検索料：450円</span><br>
         <span style="margin-left: 1em">見出し、閲覧料は一切かかりません。</span><br>
       </p>
     </div>
@@ -101,20 +117,36 @@ export default {
   },
   methods: {
     async orderPlanUpgrade() {
-      const confirm = await this.$confirm(`プランの変更を行いますが、よろしいですか？`).catch(() => {})
+      const confirm = await this.$confirm(
+        `プランの変更を行いますが、よろしいですか？`
+      ).catch(() => {})
       if (confirm === undefined) return
 
       this.loading = true
       try {
-        await updateCompany({ companyId: this.companyId, data: { selectedPlan: PLANS.STANDARD }})
-        await functions.httpsCallable('notifyAdminOrderedPlanUpgrade')({ companyId: this.companyId })
+        await updateCompany({
+          companyId: this.companyId,
+          data: { selectedPlan: PLANS.STANDARD }
+        })
+        await functions.httpsCallable('notifyAdminOrderedPlanUpgrade')({
+          companyId: this.companyId
+        })
         const title = 'お申し込みありがとうございます'
-        const body = 'スタンダードプランが有効になるまでしばらくお待ち下さい。有効になりましたらメールでお知らせいたします'
+        const body =
+          'スタンダードプランが有効になるまでしばらくお待ち下さい。有効になりましたらメールでお知らせいたします'
         this.$alert(body, title)
-        this.$store.commit('user/SET_PLAN_STATUS', PLAN_STATUSES.ORDERING_STANDARD)
+        this.$store.commit(
+          'user/SET_PLAN_STATUS',
+          PLAN_STATUSES.ORDERING_STANDARD
+        )
       } catch (err) {
         this.$rollbar.error(err)
-        this.$notify({ type: 'error', title: 'Error', message: '申込みに失敗しました。時間をおいて再度お試しください' })
+        this.$notify({
+          type: 'error',
+          title: 'Error',
+          message:
+            '申込みに失敗しました。通信環境を確認したうえで再度お試しください。'
+        })
       } finally {
         this.loading = false
       }
@@ -124,9 +156,9 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-  body
-    font-family: "Open Sans", sans-serif
-    line-height: 1.25
+body
+  font-family: "Open Sans", sans-serif
+  line-height: 1.25
 
   table
     border-collapse: collapse

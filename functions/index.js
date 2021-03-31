@@ -16,6 +16,7 @@ if (willFuncRequire('autoBackupAuth')) exports.autoBackupAuth = require('./src/c
 if (willFuncRequire('awakeFunctions')) exports.awakeFunctions = require('./src/cron/awake_functions')
 
 if (willFuncRequire('isPhoneNumberRegistered')) exports.isPhoneNumberRegistered = require('./src/auth/phone')
+if (willFuncRequire('isRefereePhoneNumberRegistered')) exports.isRefereePhoneNumberRegistered = require('./src/auth/phone_referee')
 if (willFuncRequire('toggleAuthDisabled')) exports.toggleAuthDisabled = require('./src/auth/toggle_disabled')
 if (willFuncRequire('getCompanyByUid')) exports.getCompanyByUid = require('./src/api/company').getCompanyByMainUid
 if (willFuncRequire('getCompanyBySubAccountUid')) exports.getCompanyBySubAccountUid = require('./src/api/company').getCompanyBySubUid

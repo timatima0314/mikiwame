@@ -1,6 +1,12 @@
 <template>
   <div class="login-container">
-    <el-form ref="form" class="login-form" :rules="rules" :model="form" @submit.native.prevent="resetPassword">
+    <el-form
+      ref="form"
+      class="login-form"
+      :rules="rules"
+      :model="form"
+      @submit.native.prevent="resetPassword"
+    >
       <div class="title-container">
         <h3 class="title">パスワードの再設定</h3>
       </div>
@@ -9,19 +15,34 @@
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
-        <el-input v-model="form.password" type="password" placeholder="新しいパスワードを入力してください" />
+        <el-input
+          v-model="form.password"
+          type="password"
+          placeholder="新しいパスワードを入力してください"
+        />
       </el-form-item>
 
       <el-form-item prop="passwordConf">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
-        <el-input v-model="form.passwordConf" type="password" placeholder="確認のためもう一度ご入力ください" />
+        <el-input
+          v-model="form.passwordConf"
+          type="password"
+          placeholder="確認のためもう一度ご入力ください"
+        />
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" native-type="submit" style="width: 100%">確定</el-button>
-      <div style="text-align: center; padding: 1em; color: skyblue;">
-        <router-link :to="{ name: 'clientLogin' }">ログインページに戻る</router-link>
+      <el-button
+        :loading="loading"
+        type="primary"
+        native-type="submit"
+        style="width: 100%"
+      >確定</el-button>
+      <div style="text-align: center; padding: 1em; color: skyblue">
+        <router-link
+          :to="{ name: 'clientLogin' }"
+        >ログインページに戻る</router-link>
       </div>
     </el-form>
   </div>
@@ -53,9 +74,7 @@ export default {
         password: [
           { min: 6, message: 'パスワードは6文字以上です', trigger: 'blur' }
         ],
-        passwordConf: [
-          { validator: matchPassword, trigger: 'blur' }
-        ]
+        passwordConf: [{ validator: matchPassword, trigger: 'blur' }]
       }
     }
   },
@@ -64,10 +83,13 @@ export default {
     // メーラーによってはリンクの&がamp;にエスケープされてしまうのでそれを考慮
     this.auth.oobCode = query.oobCode || query['amp;oobCode']
     if (this.auth.oobCode === undefined) this.redirectToLogin()
-    firebase.auth().verifyPasswordResetCode(this.auth.oobCode)
-      .then(email => {
+    firebase
+      .auth()
+      .verifyPasswordResetCode(this.auth.oobCode)
+      .then((email) => {
         this.auth.email = email
-      }).catch(err => {
+      })
+      .catch((err) => {
         this.$rollbar.error(err)
         this.$message({
           message: 'リンクの有効期限が切れています',
@@ -81,10 +103,12 @@ export default {
       this.$router.push({ name: 'clientLogin' })
     },
     async resetPassword() {
-      if (!await this.$refs.form.validate()) return
+      if (!(await this.$refs.form.validate())) return
 
       this.loading = true
-      firebase.auth().confirmPasswordReset(this.auth.oobCode, this.form.password)
+      firebase
+        .auth()
+        .confirmPasswordReset(this.auth.oobCode, this.form.password)
         .then(() => {
           this.$message({
             message: 'パスワードの再設定に成功しました',
@@ -92,10 +116,11 @@ export default {
           })
           this.redirectToLogin()
         })
-        .catch(err => {
+        .catch((err) => {
           this.$rollbar.error(err)
           this.$message({
-            message: 'パスワードの再設定に失敗しました。時間をおいて再度お試しください',
+            message:
+              'パスワードの再設定に失敗しました。通信環境を確認したうえで再度お試しください。',
             type: 'error'
           })
         })
@@ -108,9 +133,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 
 .login-container {
   min-height: 100%;

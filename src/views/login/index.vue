@@ -1,13 +1,32 @@
 <template>
   <section class="login-page">
     <div class="login-container">
-      <el-form v-show="loginStatus === LOGIN_STATUSES.MAIL_LOGIN" ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" style="background-color: #fff; padding: 30px;">
+      <el-form
+        v-show="loginStatus === LOGIN_STATUSES.MAIL_LOGIN"
+        ref="loginForm"
+        :model="loginForm"
+        :rules="loginRules"
+        class="login-form"
+        auto-complete="on"
+        style="background-color: #fff; padding: 30px"
+      >
         <div style="text-align: center">
-          <img src="@/assets/logo.png" style="width: 100%;">
-          <router-link :to="{name: 'signup'}" class="link-color-primary">新規会員登録はこちら</router-link>
+          <img src="@/assets/logo.png" style="width: 100%">
+          <router-link
+            :to="{ name: 'signup' }"
+            class="link-color-primary"
+          >新規会員登録はこちら</router-link>
           <br><br>
-          <router-link :to="{name: 'signup'}" class="link-color-primary">
-            <el-button style="color:#fff; background-color:#e371a3; line-height: 150%; width: 50%; padding: 6px 20px;"><b>今すぐ10日間<br>無料でお試し</b></el-button>
+          <router-link :to="{ name: 'signup' }" class="link-color-primary">
+            <el-button
+              style="
+                color: #fff;
+                background-color: #e371a3;
+                line-height: 150%;
+                width: 50%;
+                padding: 6px 20px;
+              "
+            ><b>今すぐ10日間<br>無料でお試し</b></el-button>
           </router-link>
         </div>
 
@@ -42,21 +61,41 @@
           />
         </el-form-item>
 
-        <el-button :loading="loading" class="login-button" @click.native.prevent="handleMailLogin">ログイン</el-button>
-        <el-checkbox v-model="willPersistLogin" style="margin-top: 1rem">ログイン状態を保持する</el-checkbox>
+        <el-button
+          :loading="loading"
+          class="login-button"
+          @click.native.prevent="handleMailLogin"
+        >ログイン</el-button>
+        <el-checkbox
+          v-model="willPersistLogin"
+          style="margin-top: 1rem"
+        >ログイン状態を保持する</el-checkbox>
         <div class="actions-container login-info">
           <reset-password-modal class="forgot">
-            <a href="javascript:void(0)" class="link-color-light">パスワードをお忘れですか?</a>
+            <a
+              href="javascript:void(0)"
+              class="link-color-light"
+            >パスワードをお忘れですか?</a>
           </reset-password-modal>
-          <router-link :to="{name: isAdminLogin ? 'clientLogin' : 'adminLogin'}" class="link-color-primary" style="float: right">
-            {{ isAdminLogin ? 'お客様はこちら' : '管理者の方はこちら' }}
+          <router-link
+            :to="{ name: isAdminLogin ? 'clientLogin' : 'adminLogin' }"
+            class="link-color-primary"
+            style="float: right"
+          >
+            {{ isAdminLogin ? "お客様はこちら" : "管理者の方はこちら" }}
           </router-link>
         </div>
       </el-form>
 
-      <el-form v-show="loginStatus === LOGIN_STATUSES.PHONE_LOGIN" class="login-form" @submit.native.prevent="handlePhoneLogin">
-        <div class="title-container" style="margin-bottom: 1em;">
-          <span class="text">{{ convertedPhoneNumber }}に認証コードを送信しました</span>
+      <el-form
+        v-show="loginStatus === LOGIN_STATUSES.PHONE_LOGIN"
+        class="login-form"
+        @submit.native.prevent="handlePhoneLogin"
+      >
+        <div class="title-container" style="margin-bottom: 1em">
+          <span
+            class="text"
+          >{{ convertedPhoneNumber }}に認証コードを送信しました</span>
         </div>
         <el-form-item prop="tel">
           <el-input
@@ -68,9 +107,19 @@
             auto-complete="on"
           />
         </el-form-item>
-        <el-button :loading="loading" type="primary" native-type="submit" class="login-button">確定</el-button>
+        <el-button
+          :loading="loading"
+          type="primary"
+          native-type="submit"
+          class="login-button"
+        >確定</el-button>
         <div style="height: 1rem" />
-        <el-button :loading="loading" type="info" class="login-button login-button-secondary" @click="onClickBack">ログイン画面に戻る</el-button>
+        <el-button
+          :loading="loading"
+          type="info"
+          class="login-button login-button-secondary"
+          @click="onClickBack"
+        >ログイン画面に戻る</el-button>
       </el-form>
       <div id="recaptcha" />
     </div>
@@ -132,7 +181,10 @@ export default {
     }
   },
   mounted() {
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha', { size: 'invisible', tabindex: '-1' })
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+      'recaptcha',
+      { size: 'invisible', tabindex: '-1' }
+    )
   },
   methods: {
     showPwd() {
@@ -154,10 +206,21 @@ export default {
       if (!valid) return
 
       this.loading = true
-      await firebase.auth().setPersistence(this.willPersistLogin ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION)
-      firebase.auth().signInWithEmailAndPassword(this.loginForm.email, this.loginForm.password)
+      await firebase
+        .auth()
+        .setPersistence(
+          this.willPersistLogin
+            ? firebase.auth.Auth.Persistence.LOCAL
+            : firebase.auth.Auth.Persistence.SESSION
+        )
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(
+          this.loginForm.email,
+          this.loginForm.password
+        )
         .then(async({ user }) => {
-          if (this.isAdminLogin && await hasAdminAuth(user.uid) === false) {
+          if (this.isAdminLogin && (await hasAdminAuth(user.uid)) === false) {
             firebase.auth().signOut()
             throw new Error('you do not have admin auth')
           }
@@ -169,64 +232,87 @@ export default {
 
           this.$message.success('認証コードを送信中です')
           this.phoneNumber = user.phoneNumber
-          firebase.auth().signInWithPhoneNumber(this.phoneNumber, window.recaptchaVerifier)
-            .then(confirmationResult => {
+          firebase
+            .auth()
+            .signInWithPhoneNumber(this.phoneNumber, window.recaptchaVerifier)
+            .then((confirmationResult) => {
               this.confirmationResult = confirmationResult
               this.loginStatus = LOGIN_STATUSES.PHONE_LOGIN
               this.$nextTick(() => {
                 this.loading = false
               })
             })
-            .catch(err => {
+            .catch((err) => {
               this.$rollbar.error(err)
-              this.$alert('時間をおいて再度お試しください', '認証コードの送信に失敗しました')
+              this.$alert(
+                '通信環境を確認したうえで再度お試しください。',
+                '認証コードの送信に失敗しました'
+              )
               this.loading = false
             })
         })
-        .catch(err => {
+        .catch((err) => {
           this.$rollbar.error(err)
-          this.$alert('アカウントが登録されていないか、権限がありません', 'ログインに失敗しました', {
-            confirmButtonText: 'Close',
-            type: 'warning'
-          })
+          this.$alert(
+            'アカウントが登録されていないか、権限がありません',
+            'ログインに失敗しました',
+            {
+              confirmButtonText: 'Close',
+              type: 'warning'
+            }
+          )
           this.loading = false
         })
     },
     async handlePhoneLogin() {
       this.loading = true
-      const { user } = await this.confirmationResult.confirm(this.loginForm.verificationCode).catch(() => ({}))
+      const { user } = await this.confirmationResult
+        .confirm(this.loginForm.verificationCode)
+        .catch(() => ({}))
       if (user === undefined) {
         this.loading = false
         return this.$message.error('認証コードが違います')
       }
-      this.$store.dispatch('user/login', {
-        user,
-        isAdminLogin: this.isAdminLogin
-      }).then(async() => {
-        const companyId = this.$store.getters['companyId']
-        const { companyData } = await useCompany({ companyId: companyId })
+      this.$store
+        .dispatch('user/login', {
+          user,
+          isAdminLogin: this.isAdminLogin
+        })
+        .then(async() => {
+          const companyId = this.$store.getters['companyId']
+          const { companyData } = await useCompany({ companyId: companyId })
 
-        // Mikiwameを利用可能なユーザーであればtrue
-        const isAvailableMikiwame = (() => {
-          const isCardValid = get(companyData, 'creditCard.valid')
-          // 認証されていて、かつ、試用期間又はカード登録済み であれば利用可能
-          return companyData.verifiedAt && (isTrial(companyData) || isCardValid)
-        })()
+          // Mikiwameを利用可能なユーザーであればtrue
+          const isAvailableMikiwame = (() => {
+            const isCardValid = get(companyData, 'creditCard.valid')
+            // 認証されていて、かつ、試用期間又はカード登録済み であれば利用可能
+            return (
+              companyData.verifiedAt && (isTrial(companyData) || isCardValid)
+            )
+          })()
 
-        // 管理者 又は Mikiwameを利用可能なアカウントであればloginCountをインクリメントする
-        if (this.isAdmin || isAvailableMikiwame) {
-          // 初回ログインポップの表示を消した際にloginCountは-1となるため、その場合は次のloginCountを2とする
-          if (companyData.loginCount === -1) {
-            updateCompany({ companyId: companyId, data: { loginCount: 2 }}).catch(() => {})
-          } else {
-            updateCompany({ companyId: companyId, data: { loginCount: companyData.loginCount + 1 }}).catch(() => {})
+          // 管理者 又は Mikiwameを利用可能なアカウントであればloginCountをインクリメントする
+          if (this.isAdmin || isAvailableMikiwame) {
+            // 初回ログインポップの表示を消した際にloginCountは-1となるため、その場合は次のloginCountを2とする
+            if (companyData.loginCount === -1) {
+              updateCompany({
+                companyId: companyId,
+                data: { loginCount: 2 }
+              }).catch(() => {})
+            } else {
+              updateCompany({
+                companyId: companyId,
+                data: { loginCount: companyData.loginCount + 1 }
+              }).catch(() => {})
+            }
           }
-        }
-        this.$router.push(this.redirect || '/')
-      })
-        .catch(err => {
+          this.$router.push(this.redirect || '/')
+        })
+        .catch((err) => {
           this.$rollbar.error(err)
-          this.$message.error('通信エラーが発生しました。時間をおいて再度お試しください')
+          this.$message.error(
+            '通信エラーが発生しました。通信環境を確認したうえで再度お試しください。'
+          )
           this.loading = false
           this.onClickBack()
         })

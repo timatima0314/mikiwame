@@ -5,8 +5,16 @@
     </span>
     <el-dialog :visible.sync="isModalOpen" title="リセットメールを受け取る">
       <div class="container">
-        <el-input v-model="email" placeholder="登録済みのメールアドレス" class="origin" />
-        <el-button :loading="loading" type="primary" @click="sendPasswordResetEmail">リセットメール送信</el-button>
+        <el-input
+          v-model="email"
+          placeholder="登録済みのメールアドレス"
+          class="origin"
+        />
+        <el-button
+          :loading="loading"
+          type="primary"
+          @click="sendPasswordResetEmail"
+        >リセットメール送信</el-button>
       </div>
     </el-dialog>
   </div>
@@ -25,7 +33,9 @@ export default {
   methods: {
     sendPasswordResetEmail() {
       this.loading = true
-      firebase.auth().sendPasswordResetEmail(this.email)
+      firebase
+        .auth()
+        .sendPasswordResetEmail(this.email)
         .then(() => {
           this.$message({
             message: 'パスワード変更用のメールを送信しました。',
@@ -34,7 +44,8 @@ export default {
         })
         .catch(() => {
           this.$message({
-            message: 'パスワード変更用のメールを送信に失敗しました。時間をおいて再度お試しください',
+            message:
+              'パスワード変更用のメールを送信に失敗しました。通信環境を確認したうえで再度お試しください。',
             type: 'error'
           })
         })
@@ -43,7 +54,6 @@ export default {
           this.isModalOpen = false
         })
     }
-
   }
 }
 </script>

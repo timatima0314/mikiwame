@@ -40,8 +40,8 @@ const messages = {
         registerAndContinue: '登録して次へ',
         thankYouReferenceCheck: 'リファレンスチェックへのご協力ありがとうございました',
         informationKeptInStrictConfidence: 'ご回答頂きました情報は厳重に管理させていただきます。',
-        failedToLoadPhoto: '写真の読み込みに失敗しました。時間をおいて再度お試しください',
-        failedToUploadBusinessCard: '名刺のアップロードに失敗しました。時間をおいて再度お試しください',
+        failedToLoadPhoto: '写真の読み込みに失敗しました。通信環境を確認したうえで再度お試しください。',
+        failedToUploadBusinessCard: '名刺のアップロードに失敗しました。通信環境を確認したうえで再度お試しください。',
         deadlinePassed: '回答期限が過ぎています。',
         modifyYourAnswer: '回答を修正する',
         uploadedBusinessCard: '名刺をアップロードしました',
@@ -393,11 +393,11 @@ const messages = {
     jp: {
       message: {
         answerSentSuccessfully: '回答の送信に成功しました。',
-        answerSentFailed: '回答の送信に失敗しました。時間をおいて再度お試しください。',
+        answerSentFailed: '回答の送信に失敗しました。通信環境を確認したうえで再度お試しください。',
         somthingSuccess: '{message}に成功しました',
-        errorSaving: '保存に失敗しました。時間をおいて再度お試しください',
+        errorSaving: '保存に失敗しました。通信環境を確認したうえで再度お試しください。',
         inputIsIncomplete: '入力に不備がございます',
-        errorPleaseAgain: 'エラーが発生しました。時間をおいて再度お試しください。',
+        errorPleaseAgain: 'エラーが発生しました。通信環境を確認したうえで再度お試しください。',
         errorPleaseAuthenticateAgain: 'エラーが発生しました。再度認証を行い回答の送信をお願いします。'
       }
     },
