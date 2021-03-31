@@ -72,15 +72,13 @@
                 type="success"
                 icon="el-icon-edit"
                 @click="isEditModalOpen = true"
-                >編集する</el-button
-              >
+              >編集する</el-button>
               <el-button
                 v-if="showingTemplateQuestions.id"
                 type="danger"
                 icon="el-icon-deletes"
                 @click="removeTemplateQuestions(showingTemplateQuestions)"
-                >削除する</el-button
-              >
+              >削除する</el-button>
             </div>
           </el-card>
 
@@ -90,7 +88,7 @@
               <el-form-item
                 v-if="
                   showingTemplateQuestions['en'] &&
-                  showingTemplateQuestions['cn']
+                    showingTemplateQuestions['cn']
                 "
                 label="表示する質問の言語"
                 style="text-align: left; margin-bottom: 10px"
@@ -107,12 +105,14 @@
             </el-form>
 
             <el-tabs v-model="showingQuestionType" type="card">
-              <el-tab-pane label="記述式" name="descriptions"
-                ><h3>記述式の質問({{ descriptionsLength }}問)</h3></el-tab-pane
-              >
-              <el-tab-pane label="選択式" name="selections"
-                ><h3>選択式の質問({{ selectionsLength }}問)</h3></el-tab-pane
-              >
+              <el-tab-pane
+                label="記述式"
+                name="descriptions"
+              ><h3>記述式の質問({{ descriptionsLength }}問)</h3></el-tab-pane>
+              <el-tab-pane
+                label="選択式"
+                name="selections"
+              ><h3>選択式の質問({{ selectionsLength }}問)</h3></el-tab-pane>
             </el-tabs>
 
             <template v-if="showingQuestionType === 'descriptions'">
@@ -146,109 +146,109 @@
 </template>
 
 <script>
-import dayjs from "dayjs";
-import defaultTo from "lodash/defaultTo";
-import get from "lodash/get";
-import isEmpty from "lodash/isEmpty";
-import { mapGetters } from "vuex";
-import { useCompany, deleteTemplateQuestions } from "@/utils/hooks/firestore";
-import EditableQuestions from "@/components/EditableQuestions";
-import AddEditTemplateQuestions from "@/components/AddEditTemplateQuestions";
+import dayjs from 'dayjs'
+import defaultTo from 'lodash/defaultTo'
+import get from 'lodash/get'
+import isEmpty from 'lodash/isEmpty'
+import { mapGetters } from 'vuex'
+import { useCompany, deleteTemplateQuestions } from '@/utils/hooks/firestore'
+import EditableQuestions from '@/components/EditableQuestions'
+import AddEditTemplateQuestions from '@/components/AddEditTemplateQuestions'
 import {
   getDefaultQuestionsByLang,
-  getDefaultQuestionsForRookieByLang,
-} from "@/constants/questions";
-import { getAnswererRanks, getQuestionsLangByLang } from "@/constants/options";
+  getDefaultQuestionsForRookieByLang
+} from '@/constants/questions'
+import { getAnswererRanks, getQuestionsLangByLang } from '@/constants/options'
 
 export default {
-  name: "TemplateQuestions",
+  name: 'TemplateQuestions',
   components: { EditableQuestions, AddEditTemplateQuestions },
   data() {
     return {
-      questionsLang: "jp",
+      questionsLang: 'jp',
       isAddModalOpen: false,
       isEditModalOpen: false,
-      searchText: "",
+      searchText: '',
       listLoading: false,
       fullScreenLoading: false,
       showingTemplateQuestions: {
-        name: "デフォルトテンプレート",
-        jp: getDefaultQuestionsByLang("jp"),
-        en: getDefaultQuestionsByLang("en"),
-        cn: getDefaultQuestionsByLang("cn"),
+        name: 'デフォルトテンプレート',
+        jp: getDefaultQuestionsByLang('jp'),
+        en: getDefaultQuestionsByLang('en'),
+        cn: getDefaultQuestionsByLang('cn')
       }, // 表示質問テンプレート
-      showingQuestionType: "descriptions",
+      showingQuestionType: 'descriptions',
       templateQuestionsList: [], // 質問テンプレート群
-      templateType: "fulltime",
+      templateType: 'fulltime',
       answererRanks: getAnswererRanks(),
-      unsubscribe: () => {},
-    };
+      unsubscribe: () => {}
+    }
   },
   computed: {
-    ...mapGetters(["companyId"]),
+    ...mapGetters(['companyId']),
     filteredTemplateQuestionsList() {
       const categorizedQuestions = this.templateQuestionsList.filter(
         (question) => question.templateType === this.templateType
-      );
+      )
       return this.searchText
         ? categorizedQuestions.filter((tmp) =>
-            JSON.stringify(Object.values(tmp)).includes(this.searchText)
-          )
-        : categorizedQuestions;
+          JSON.stringify(Object.values(tmp)).includes(this.searchText)
+        )
+        : categorizedQuestions
     },
     descriptionsLength() {
       return this.showingTemplateQuestions[this.questionsLang].descriptions
-        .length;
+        .length
     },
     selectionsLength() {
       return this.showingTemplateQuestions[this.questionsLang].selections
-        .length;
+        .length
     },
     options: () => ({
-      questionsLang: getQuestionsLangByLang(),
-    }),
+      questionsLang: getQuestionsLangByLang()
+    })
   },
   async created() {
-    this.listLoading = true;
+    this.listLoading = true
     const { companyDocumentSnapshot } = await useCompany({
-      companyId: this.companyId,
-    });
+      companyId: this.companyId
+    })
     const templateQuestionsQuery = companyDocumentSnapshot.ref
-      .collection("templateQuestions")
-      .orderBy("createdAt", "asc");
+      .collection('templateQuestions')
+      .orderBy('createdAt', 'asc')
     // マルパク（意味理解せず）
     this.unsubscribe = templateQuestionsQuery.onSnapshot((snapshot) => {
       snapshot.docChanges().forEach((change) => {
         switch (change.type) {
-          case "added": // 初回取得時 or データ追加時
+          case 'added': // 初回取得時 or データ追加時
             this.templateQuestionsList.unshift({
               ...change.doc.data(),
-              id: change.doc.id,
-            });
-            break;
-          case "modified":
+              id: change.doc.id
+            })
+            break
+          case 'modified':
             Object.assign(
               this.templateQuestionsList.find(
                 ({ id }) => id === change.doc.id
               ) || {},
               change.doc.data()
-            );
-            break;
-          case "removed":
+            )
+            break
+          case 'removed':
             this.templateQuestionsList.splice(
               this.templateQuestionsList
                 .map((target) => target.id)
                 .indexOf(change.doc.id),
               1
-            );
-            break;
+            )
+            break
         }
-      });
-    });
-    this.listLoading = false;
+      })
+    })
+    this.listLoading = false
   },
   beforeDestroy() {
-    this.unsubscribe();
+    this.unsubscribe()
   },
   methods: {
     defaultTo,
@@ -256,68 +256,68 @@ export default {
     isEmpty,
     dayjs,
     toggleLoading() {
-      this.fullScreenLoading = !this.fullScreenLoading;
+      this.fullScreenLoading = !this.fullScreenLoading
     },
     // 選択した質問テンプレートを表示
     selectTemplateQuestions(tmp) {
-      this.questionsLang = "jp";
-      this.showingTemplateQuestions = tmp;
+      this.questionsLang = 'jp'
+      this.showingTemplateQuestions = tmp
     },
     // 選択した質問テンプレートのカードの色を暗めに（
     // TODO: デフォルトテンプレートは暗くならないので，あとあとどうにか
     changeSelectedButtonColor(id) {
       if (id === this.showingTemplateQuestions.id) {
-        return { "background-color": "#e5e5ed" };
+        return { 'background-color': '#e5e5ed' }
       }
     },
     // 表示内容をデフォルトテンプレートにする
     setDefaultTemplateQuestions() {
       this.showingTemplateQuestions = {
-        name: "デフォルトテンプレート",
+        name: 'デフォルトテンプレート',
         jp:
-          this.templateType === "rookie"
-            ? getDefaultQuestionsForRookieByLang("jp")
-            : getDefaultQuestionsByLang("jp"),
+          this.templateType === 'rookie'
+            ? getDefaultQuestionsForRookieByLang('jp')
+            : getDefaultQuestionsByLang('jp'),
         en:
-          this.templateType === "rookie"
-            ? getDefaultQuestionsForRookieByLang("en")
-            : getDefaultQuestionsByLang("en"),
+          this.templateType === 'rookie'
+            ? getDefaultQuestionsForRookieByLang('en')
+            : getDefaultQuestionsByLang('en'),
         cn:
-          this.templateType === "rookie"
-            ? getDefaultQuestionsForRookieByLang("cn")
-            : getDefaultQuestionsByLang("cn"),
-      };
+          this.templateType === 'rookie'
+            ? getDefaultQuestionsForRookieByLang('cn')
+            : getDefaultQuestionsByLang('cn')
+      }
     },
     // 質問テンプレートの削除
     async removeTemplateQuestions(tmp) {
       const confirm = await this.$confirm(
         `質問テンプレート「${tmp.name}」を削除してもよろしいですか`
-      ).catch(() => {});
-      if (confirm === undefined) return;
+      ).catch(() => {})
+      if (confirm === undefined) return
 
       deleteTemplateQuestions({
         companyId: this.companyId,
-        templateQuestionsId: tmp.id,
+        templateQuestionsId: tmp.id
       })
         .then(() => {
           this.$message({
-            message: "削除に成功しました",
-            type: "success",
-          });
+            message: '削除に成功しました',
+            type: 'success'
+          })
         })
         .catch((err) => {
-          this.$rollbar.error(err);
+          this.$rollbar.error(err)
           this.$message({
             message:
-              "削除に失敗しました。通信環境を確認したうえで再度お試しください。",
-            type: "error",
-          });
-        });
+              '削除に失敗しました。通信環境を確認したうえで再度お試しください。',
+            type: 'error'
+          })
+        })
 
-      this.setDefaultTemplateQuestions();
-    },
-  },
-};
+      this.setDefaultTemplateQuestions()
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

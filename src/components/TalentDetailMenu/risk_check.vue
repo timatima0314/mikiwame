@@ -5,17 +5,17 @@
       <el-row :gutter="20">
         <el-col :span="7">
           <el-card class="card card-paper">
-            <span class="title title-paper"
-              ><i class="el-icon-reading" /> 新聞</span
-            >
+            <span
+              class="title title-paper"
+            ><i class="el-icon-reading" /> 新聞</span>
             <div class="num">{{ paperClipCount }}件</div>
           </el-card>
         </el-col>
         <el-col :span="7">
           <el-card class="card card-web">
-            <span class="title title-web"
-              ><i class="el-icon-monitor" /> web</span
-            >
+            <span
+              class="title title-web"
+            ><i class="el-icon-monitor" /> web</span>
             <div class="num">{{ webClipCount }}件</div>
           </el-card>
         </el-col>
@@ -44,8 +44,8 @@
     </div>
     <div v-else>
       <el-popover placement="right" width="350" trigger="hover">
-        候補者の名前が含まれる記事の件数を取得します。<br />
-        一件以上ヒットした場合、ヒットした記事の一覧を確認することができます。<br />
+        候補者の名前が含まれる記事の件数を取得します。<br>
+        一件以上ヒットした場合、ヒットした記事の一覧を確認することができます。<br>
         <el-button
           slot="reference"
           :loading="loading"
@@ -60,102 +60,102 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import get from "lodash/get";
-import { functions } from "@/plugins/firebase";
+import { mapGetters } from 'vuex'
+import get from 'lodash/get'
+import { functions } from '@/plugins/firebase'
 
 export default {
-  name: "RiskCheck",
+  name: 'RiskCheck',
   props: {
     talentData: {
       type: Object,
       default: () => ({
-        name: "",
-        email: "",
-        id: "",
-        deadline: new Date(),
-      }),
+        name: '',
+        email: '',
+        id: '',
+        deadline: new Date()
+      })
     },
-    riskEyesId: { type: String, default: "" },
+    riskEyesId: { type: String, default: '' }
   },
   data: () => ({
     loading: false,
     paperClipCount: null,
     webClipCount: null,
-    riskEyesUrl: "",
+    riskEyesUrl: ''
   }),
   computed: {
-    ...mapGetters(["companyId"]),
+    ...mapGetters(['companyId'])
   },
   watch: {
     talentData() {
-      this.paperClipCount = get(this.talentData, "riskCheck.paperClipCount");
-      this.webClipCount = get(this.talentData, "riskCheck.webClipCount");
-    },
+      this.paperClipCount = get(this.talentData, 'riskCheck.paperClipCount')
+      this.webClipCount = get(this.talentData, 'riskCheck.webClipCount')
+    }
   },
   created() {
-    this.paperClipCount = get(this.talentData, "riskCheck.paperClipCount");
-    this.webClipCount = get(this.talentData, "riskCheck.webClipCount");
+    this.paperClipCount = get(this.talentData, 'riskCheck.paperClipCount')
+    this.webClipCount = get(this.talentData, 'riskCheck.webClipCount')
   },
   methods: {
     get,
     onClickGetClipCount() {
-      this.loading = true;
-      const { id: talentId } = this.talentData;
+      this.loading = true
+      const { id: talentId } = this.talentData
       functions
-        .httpsCallable("fetchAndSaveRiskCheck")({
+        .httpsCallable('fetchAndSaveRiskCheck')({
           companyId: this.companyId,
-          talentId,
+          talentId
         })
         .then((response) => {
-          this.paperClipCount = response.data.paperClipCount;
-          this.webClipCount = response.data.webClipCount;
+          this.paperClipCount = response.data.paperClipCount
+          this.webClipCount = response.data.webClipCount
         })
         .catch((err) => {
-          this.$rollbar.error(err);
-          if (err.code === "permission-denied") {
+          this.$rollbar.error(err)
+          if (err.code === 'permission-denied') {
             this.$notify({
-              type: "error",
-              title: "Error",
-              message: "反社チェックIDが設定されていません",
-            });
+              type: 'error',
+              title: 'Error',
+              message: '反社チェックIDが設定されていません'
+            })
           } else {
             this.$notify({
-              type: "error",
-              title: "Error",
+              type: 'error',
+              title: 'Error',
               message:
-                "記事件数の取得に失敗しました。通信環境を確認したうえで再度お試しください。",
-            });
+                '記事件数の取得に失敗しました。通信環境を確認したうえで再度お試しください。'
+            })
           }
         })
         .finally(() => {
-          this.loading = false;
-        });
+          this.loading = false
+        })
     },
     openClipListPage() {
-      this.loading = true;
-      const { name } = this.talentData;
+      this.loading = true
+      const { name } = this.talentData
       functions
-        .httpsCallable("getRiskCheckResultUrl")({ talentName: name })
+        .httpsCallable('getRiskCheckResultUrl')({ talentName: name })
         .then((response) => {
-          this.riskEyesUrl = response.data.resultUrl;
-          window.open(response.data.resultUrl);
+          this.riskEyesUrl = response.data.resultUrl
+          window.open(response.data.resultUrl)
         })
         .catch((err) => {
-          this.$rollbar.error(err);
+          this.$rollbar.error(err)
           this.$notify({
-            type: "error",
-            title: "Error",
+            type: 'error',
+            title: 'Error',
             message:
-              "記事のURLの取得に失敗しました。通信環境を確認したうえで再度お試しください。",
-          });
+              '記事のURLの取得に失敗しました。通信環境を確認したうえで再度お試しください。'
+          })
         })
         .finally(() => {
-          this.loading = false;
-        });
-    },
-  },
-};
+          this.loading = false
+        })
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

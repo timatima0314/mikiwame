@@ -7,7 +7,7 @@
 
     <div id="print-page">
       <div v-if="showLogo">
-        <img :src="logo" class="logo" />
+        <img :src="logo" class="logo">
       </div>
       <el-card id="report-card" shadow="never" class="card-entire">
         <el-row :gutter="20">
@@ -60,7 +60,7 @@
           </el-col>
           <el-col :span="8">
             <p>
-              リファレンスチェックの状態<br />
+              リファレンスチェックの状態<br>
               <span class="status">{{ statusText }}</span>
             </p>
             <p>
@@ -166,7 +166,7 @@
         </div>
 
         <div v-if="descriptionsAndAnswers.length !== 0">
-          <hr style="margin: 1rem" />
+          <hr style="margin: 1rem">
 
           <el-row :gutter="20">
             <el-col :span="3.5" :offset="1">
@@ -185,10 +185,10 @@
             </el-col>
             <el-col :span="18">
               <p style="margin: 0px; font-size: 0.9rem">
-                ■コミュニケーション機能について <br />
-                推薦者の回答の中で、気になる項目を求職者に質問することができます。<br />
-                気になる回答にチェックを入れて最下部から送信してください。<br />
-                自由記載にて質問することも可能です。なお、求職者への質問は、一回限りとなります。<br />
+                ■コミュニケーション機能について <br>
+                推薦者の回答の中で、気になる項目を求職者に質問することができます。<br>
+                気になる回答にチェックを入れて最下部から送信してください。<br>
+                自由記載にて質問することも可能です。なお、求職者への質問は、一回限りとなります。<br>
                 ※推薦者のお名前は開示されません。
               </p>
             </el-col>
@@ -205,13 +205,13 @@
                 <div
                   v-if="
                     j === 'jp' ||
-                    (description.answers && description.answers.length)
+                      (description.answers && description.answers.length)
                   "
                 >
                   <div class="questionsAndAnswers-label">
-                    <span class="item-title questionsAndAnswers-num"
-                      >{{ i + 1 }}.</span
-                    >
+                    <span
+                      class="item-title questionsAndAnswers-num"
+                    >{{ i + 1 }}.</span>
                     {{ description.text }}
                   </div>
                   <div v-if="!description.answers" class="type-text">
@@ -227,19 +227,19 @@
                       :value="findExcuse(description.key, answer.id, false)"
                       disabled
                     />
-                    <span class="questionsAndAnswers-name"
-                      ><i class="el-icon-user-solid" />{{ answer.name }}</span
-                    >
+                    <span
+                      class="questionsAndAnswers-name"
+                    ><i class="el-icon-user-solid" />{{ answer.name }}</span>
                     <div class="questionsAndAnswers-text">
                       {{ answer.answerText || "未回答" }}
                     </div>
                     <div
                       v-if="
                         talent.excuseCompletedAt &&
-                        findExcuse(description.key, answer.id, true)
+                          findExcuse(description.key, answer.id, true)
                       "
                     >
-                      <hr class="regain-trust-divider" />
+                      <hr class="regain-trust-divider">
                       <p class="regain-trust-excuse">
                         候補者からの回答：{{
                           findExcuse(description.key, answer.id, true)
@@ -273,15 +273,15 @@
               class="questionsAndAnswers-row"
             >
               <div class="questionsAndAnswers-label">
-                <span class="item-title questionsAndAnswers-num"
-                  >{{ i + 1 }}.</span
-                >
+                <span
+                  class="item-title questionsAndAnswers-num"
+                >{{ i + 1 }}.</span>
                 {{ selection.text }}
               </div>
               <div v-for="(answer, j) in selection.answers" :key="j">
-                <span class="questionsAndAnswers-name"
-                  ><i class="el-icon-user-solid" />{{ answer.name }}<br
-                /></span>
+                <span
+                  class="questionsAndAnswers-name"
+                ><i class="el-icon-user-solid" />{{ answer.name }}<br></span>
                 <ul
                   v-for="(text, k) in radioSelectionText['jp']"
                   :key="k"
@@ -305,7 +305,7 @@
             <template
               v-if="
                 talent.excuseCreatedAt &&
-                talent.excusesToRegainTrust.fromCompany.text
+                  talent.excusesToRegainTrust.fromCompany.text
               "
             >
               <div class="regain-trust-from-company questionsAndAnswers-row">
@@ -313,7 +313,7 @@
                 {{ talent.excusesToRegainTrust.fromCompany.text }}
               </div>
               <div v-if="talent.excuseCompletedAt">
-                <hr class="regain-trust-divider" />
+                <hr class="regain-trust-divider">
                 <p class="regain-trust-excuse">
                   候補者からの回答：{{
                     talent.excusesToRegainTrust.fromCompany.excuse
@@ -358,16 +358,17 @@
                 />
               </el-form-item>
               <div class="regain-trust-mail-button">
-                <el-button type="info" @click="sendTalentRegainTrustMail()"
-                  >追加質問の送信</el-button
-                >
+                <el-button
+                  type="info"
+                  @click="sendTalentRegainTrustMail()"
+                >追加質問の送信</el-button>
               </div>
               <div style="text-align: center">
                 <p class="regain-trust-explanation">
-                  <strong>■コミュニケーション機能について</strong><br />
-                  推薦者の回答の中で、気になる項目を求職者に質問することができます。<br />
-                  気になる回答にチェックを入れて送信してください。<br />
-                  自由記載にて質問することも可能です。なお、求職者への質問は、一回限りとなります。<br />
+                  <strong>■コミュニケーション機能について</strong><br>
+                  推薦者の回答の中で、気になる項目を求職者に質問することができます。<br>
+                  気になる回答にチェックを入れて送信してください。<br>
+                  自由記載にて質問することも可能です。なお、求職者への質問は、一回限りとなります。<br>
                   ※推薦者のお名前は開示されません。
                 </p>
               </div>
@@ -377,49 +378,52 @@
               class="regain-trust-mail-button"
             >
               <RegainTrustDeadline :date="talent.excuseDeadline" />
-              <el-button type="info" disabled
-                >候補者からの回答待ちです</el-button
-              >
+              <el-button
+                type="info"
+                disabled
+              >候補者からの回答待ちです</el-button>
             </div>
             <div
               v-else-if="talent.excuseCompletedAt"
               class="regain-trust-mail-button"
             >
-              <el-button type="info" disabled
-                >候補者は追加質問に対して回答済みです</el-button
-              >
+              <el-button
+                type="info"
+                disabled
+              >候補者は追加質問に対して回答済みです</el-button>
             </div>
           </div>
         </div>
       </el-card>
     </div>
     <div class="previous-page">
-      <router-link to="/company"
-        ><el-button type="primary" icon="el-icon-arrow-left"
-          >戻る</el-button
-        ></router-link
-      >
+      <router-link
+        to="/company"
+      ><el-button
+        type="primary"
+        icon="el-icon-arrow-left"
+      >戻る</el-button></router-link>
     </div>
   </div>
 </template>
 
 <script>
-import get from "lodash/get";
-import html2pdf from "html2pdf.js";
-import { useTalent, updateTalent, getReferees } from "@/utils/hooks/firestore";
-import { mapGetters } from "vuex";
-import logo from "@/assets/logo.png";
-import { defaultDeadline } from "@/constants/date";
-import { functions } from "@/plugins/firebase";
-import RegainTrustDeadline from "@/components/RegainTrustDeadline";
+import get from 'lodash/get'
+import html2pdf from 'html2pdf.js'
+import { useTalent, updateTalent, getReferees } from '@/utils/hooks/firestore'
+import { mapGetters } from 'vuex'
+import logo from '@/assets/logo.png'
+import { defaultDeadline } from '@/constants/date'
+import { functions } from '@/plugins/firebase'
+import RegainTrustDeadline from '@/components/RegainTrustDeadline'
 import {
   selectionPatterns,
   radioSelectionText,
-  radioSelectionScore,
-} from "@/constants/questions";
+  radioSelectionScore
+} from '@/constants/questions'
 
 export default {
-  name: "TalentReport",
+  name: 'TalentReport',
   components: { RegainTrustDeadline },
   data: () => ({
     selectionPatterns,
@@ -433,50 +437,50 @@ export default {
       excusesToRegainTrust: {
         fromReferees: [],
         fromCompany: {
-          text: "",
-          excuse: "",
-        },
-      },
+          text: '',
+          excuse: ''
+        }
+      }
     },
     talent: {
-      name: "",
-      belongs: "",
-      rank: "",
+      name: '',
+      belongs: '',
+      rank: ''
     },
     selectionsEvaluation: [
-      { type: "compliance", text: "コンプライアンス", evaluation: "未" },
-      { type: "attendance", text: "勤怠", evaluation: "未" },
-      { type: "responsibility", text: "責任感", evaluation: "未" },
-      { type: "attitude", text: "仕事に対する姿勢", evaluation: "未" },
-      { type: "accomplishment", text: "業務完遂力", evaluation: "未" },
-      { type: "tolerance", text: "ストレス耐性", evaluation: "未" },
-      { type: "others", text: "その他", evaluation: "未" },
+      { type: 'compliance', text: 'コンプライアンス', evaluation: '未' },
+      { type: 'attendance', text: '勤怠', evaluation: '未' },
+      { type: 'responsibility', text: '責任感', evaluation: '未' },
+      { type: 'attitude', text: '仕事に対する姿勢', evaluation: '未' },
+      { type: 'accomplishment', text: '業務完遂力', evaluation: '未' },
+      { type: 'tolerance', text: 'ストレス耐性', evaluation: '未' },
+      { type: 'others', text: 'その他', evaluation: '未' }
     ],
-    totalEvaluation: "未",
+    totalEvaluation: '未',
     descriptionsAndAnswers: [
       {
         jp: [
           {
-            key: "",
-            text: "",
-            answers: [],
-          },
+            key: '',
+            text: '',
+            answers: []
+          }
         ],
         en: [
           {
-            key: "",
-            text: "",
-            answers: [],
-          },
+            key: '',
+            text: '',
+            answers: []
+          }
         ],
         cn: [
           {
-            key: "",
-            text: "",
-            answers: [],
-          },
-        ],
-      },
+            key: '',
+            text: '',
+            answers: []
+          }
+        ]
+      }
     ],
     // 記述式の回答がある場合は最終的に以下のような構造になります
     // descriptionsAndAnswers: [
@@ -489,194 +493,189 @@ export default {
     // ]
     selectionsAndAnswers: [
       {
-        key: "",
-        text: "",
-        answers: [],
-      },
+        key: '',
+        text: '',
+        answers: []
+      }
     ],
     refereeCount: 0,
     answeredCount: 0, // 回答した推薦者の数
-    status: "",
+    status: ''
   }),
   computed: {
-    ...mapGetters(["companyId"]),
+    ...mapGetters(['companyId']),
     statusText() {
       const textEnum = {
-        done: "完了",
-        noReferee: "推薦者登録未完了",
-        noAnswer: "推薦者回答未完了",
-      };
-      return textEnum[this.status];
-    },
+        done: '完了',
+        noReferee: '推薦者登録未完了',
+        noAnswer: '推薦者回答未完了'
+      }
+      return textEnum[this.status]
+    }
   },
   async created() {
-    await this.fetchTalent();
+    await this.fetchTalent()
   },
   methods: {
     get,
     async fetchTalent() {
-      this.loading = true;
+      this.loading = true
       const { talentData } = await useTalent({
         companyId: this.companyId,
-        talentId: this.$route.params.talentId,
-      });
+        talentId: this.$route.params.talentId
+      })
       const referees = await getReferees({
         companyId: this.companyId,
-        talentId: this.$route.params.talentId,
-      });
-      this.refereeCount = referees.length;
-      this.talent = talentData;
+        talentId: this.$route.params.talentId
+      })
+      this.refereeCount = referees.length
+      this.talent = talentData
       // TODO:要多言語対応
       this.descriptionsAndAnswers = {
-        jp: talentData.questions["jp"].descriptions.map((description) => ({
+        jp: talentData.questions['jp'].descriptions.map((description) => ({
           key: description.key,
           text: description.text,
-          answers: [],
+          answers: []
         })),
-        en: talentData.questions["en"]?.descriptions.map((description) => ({
+        en: talentData.questions['en']?.descriptions.map((description) => ({
           key: description.key,
           text: description.text,
-          answers: [],
+          answers: []
         })),
-        cn: talentData.questions["cn"]?.descriptions.map((description) => ({
+        cn: talentData.questions['cn']?.descriptions.map((description) => ({
           key: description.key,
           text: description.text,
-          answers: [],
-        })),
-      };
-      this.selectionsAndAnswers = talentData.questions["jp"].selections.map(
+          answers: []
+        }))
+      }
+      this.selectionsAndAnswers = talentData.questions['jp'].selections.map(
         (selection) => ({
           key: selection.key,
           text: selection.text,
-          answers: [],
+          answers: []
         })
-      );
+      )
       if (talentData.evaluation) {
         referees.forEach((referee) => {
           if (referee.answer) {
-            this.answeredCount++;
+            this.answeredCount++
           }
-          this.setAnswers(referee);
-        });
+          this.setAnswers(referee)
+        })
         this.selectionsEvaluation.forEach((selection) => {
-          selection.evaluation = talentData.evaluation[selection.type] || "未";
-        });
-        this.totalEvaluation = talentData.evaluation.totalScore || "未";
+          selection.evaluation = talentData.evaluation[selection.type] || '未'
+        })
+        this.totalEvaluation = talentData.evaluation.totalScore || '未'
       }
 
       if (this.answeredCount === this.refereeCount && this.refereeCount !== 0) {
-        this.status = "done";
+        this.status = 'done'
       } else if (this.answeredCount < this.refereeCount) {
-        this.status = "noAnswer";
+        this.status = 'noAnswer'
       } else {
-        this.status = "noReferee";
+        this.status = 'noReferee'
       }
 
-      this.form.excuseDeadline = defaultDeadline;
+      this.form.excuseDeadline = defaultDeadline
 
-      this.loading = false;
+      this.loading = false
     },
     toggleLogo() {
-      this.showLogo = !this.showLogo;
+      this.showLogo = !this.showLogo
     },
     // 選択肢質問において、どの選択肢が推薦者の解答なのかを判断する
     isChoiceSelected(answer, question, index) {
       if (selectionPatterns.positivePattern.includes(question.key)) {
         // ポジティブ質問である場合
-        if (index === radioSelectionScore.indexOf(answer.answernum))
-          return true;
-        else return false;
+        if (index === radioSelectionScore.indexOf(answer.answernum)) { return true } else return false
       } else if (selectionPatterns.negativePattern.includes(question.key)) {
         // ネガティブ質問である場合
         if (
           index ===
           radioSelectionScore.slice().reverse().indexOf(answer.answernum)
-        )
-          return true;
-        else return false;
+        ) { return true } else return false
       }
-      return false;
+      return false
     },
     async printPage() {
-      this.loading = true;
-      window.scrollTo(0, 0);
-      const element = document.getElementById("print-page");
+      this.loading = true
+      window.scrollTo(0, 0)
+      const element = document.getElementById('print-page')
       const option = {
         margin: 3,
         filename: `リファレンスレポート_${this.talent.name}様.pdf`,
         pagebreak: {
-          mode: ["css"],
+          mode: ['css'],
           avoid: [
-            ".questionsAndAnswers-row",
-            ".questionsAndAnswers-num",
-            ".questionsAndAnswers-name",
-            ".questionsAndAnswers-text",
-          ],
+            '.questionsAndAnswers-row',
+            '.questionsAndAnswers-num',
+            '.questionsAndAnswers-name',
+            '.questionsAndAnswers-text'
+          ]
         },
-        jsPDF: { format: "a3" },
-      };
-      this.toggleLogo();
-      await html2pdf(element, option);
-      this.toggleLogo();
-      this.loading = false;
+        jsPDF: { format: 'a3' }
+      }
+      this.toggleLogo()
+      await html2pdf(element, option)
+      this.toggleLogo()
+      this.loading = false
     },
     setAnswers(referee) {
-      const refereeDescriptions = get(referee, "answer.descriptions");
-      const refereeSelections = get(referee, "answer.selections");
+      const refereeDescriptions = get(referee, 'answer.descriptions')
+      const refereeSelections = get(referee, 'answer.selections')
       if (
         !refereeDescriptions ||
         !refereeSelections ||
         !Object.keys(refereeDescriptions).length ||
         !Object.keys(refereeSelections).length
-      )
-        return;
+      ) { return }
 
       this.descriptionsAndAnswers[referee.language].forEach((description) => {
         if (!description.answers) {
-          description.answers = [];
+          description.answers = []
         }
         const [, answer] =
           Object.entries(refereeDescriptions).find(
             ([key]) => key === description.key
-          ) || [];
+          ) || []
         description.answers.push({
           id: referee.id,
           name: referee.name,
           answerText: answer,
-          isChecked: false,
-        });
-      });
+          isChecked: false
+        })
+      })
       this.selectionsAndAnswers.forEach((selection) => {
         if (!selection.answers) {
-          selection.answers = [];
+          selection.answers = []
         }
         const [, answer] =
           Object.entries(refereeSelections).find(
             ([key]) => key === selection.key
-          ) || [];
+          ) || []
         selection.answers.push({
           id: referee.id,
           name: referee.name,
-          answernum: answer,
-        });
-      });
+          answernum: answer
+        })
+      })
     },
     scoreStyle(score) {
-      if (score === "A") {
-        return "color: #FFF; border-color: #28a745; background: #28a745;";
-      } else if (score === "B") {
-        return "color: #FFF; border-color: #007bff; background: #007bff;";
-      } else if (score === "C" || score === "D") {
-        return "color: #FFF; border-color: #ffc107; background: #ffc107;";
-      } else if (score === "E") {
-        return "color: #FFF; border-color: #dc3545; background: #dc3545;";
+      if (score === 'A') {
+        return 'color: #FFF; border-color: #28a745; background: #28a745;'
+      } else if (score === 'B') {
+        return 'color: #FFF; border-color: #007bff; background: #007bff;'
+      } else if (score === 'C' || score === 'D') {
+        return 'color: #FFF; border-color: #ffc107; background: #ffc107;'
+      } else if (score === 'E') {
+        return 'color: #FFF; border-color: #dc3545; background: #dc3545;'
       }
     },
     async sendTalentRegainTrustMail() {
-      const valid = await this.$refs.form.validate().catch(() => {});
-      if (!valid) return;
+      const valid = await this.$refs.form.validate().catch(() => {})
+      if (!valid) return
 
-      this.loading = true;
+      this.loading = true
 
       // TODO: 多言語対応
       Object.keys(this.descriptionsAndAnswers).forEach((descriptionsByLang) => {
@@ -686,13 +685,13 @@ export default {
               if (answer.isChecked) {
                 const existingFromReferees = this.form.excusesToRegainTrust.fromReferees.find(
                   (val) => val.questionKey === description.key
-                );
+                )
                 if (existingFromReferees) {
                   existingFromReferees.answers.push({
                     refereeId: answer.id,
                     text: answer.answerText,
-                    excuse: "",
-                  });
+                    excuse: ''
+                  })
                 } else {
                   this.form.excusesToRegainTrust.fromReferees.push({
                     text: description.text,
@@ -701,16 +700,16 @@ export default {
                       {
                         refereeId: answer.id,
                         text: answer.answerText,
-                        excuse: "",
-                      },
-                    ],
-                  });
+                        excuse: ''
+                      }
+                    ]
+                  })
                 }
               }
-            });
+            })
           }
-        );
-      });
+        )
+      })
 
       // コミュニケーション機能に関する情報更新→メール送信→excuseCreatedAt更新
       // メール送信失敗した場合は再度編集できるように
@@ -774,42 +773,42 @@ export default {
           excuseDeadline: this.form.excuseDeadline,
           excuseCompletedAt: null,
           excusesToRegainTrust: this.form.excusesToRegainTrust,
-          excuseCreatedAt: new Date(),
-        },
-      });
+          excuseCreatedAt: new Date()
+        }
+      })
 
-      functions.httpsCallable("sendMailToTalentRegainTrustByIds")({
+      functions.httpsCallable('sendMailToTalentRegainTrustByIds')({
         companyId: this.companyId,
-        talentId: this.talent.id,
-      });
+        talentId: this.talent.id
+      })
       this.$notify({
-        title: "Success",
-        message: "メールの送信に成功しました",
-        type: "success",
-      });
+        title: 'Success',
+        message: 'メールの送信に成功しました',
+        type: 'success'
+      })
 
       // 表示内容を更新
-      await this.fetchTalent();
+      await this.fetchTalent()
 
-      this.loading = false;
+      this.loading = false
     },
     // コミュニケーション機能で使用する回答を絞る
     findExcuse(descriptionKey, answerId, isRequiredExcuse) {
-      if (!this.talent.excusesToRegainTrust) return "";
+      if (!this.talent.excusesToRegainTrust) return ''
 
       const fromReferee = this.talent.excusesToRegainTrust.fromReferees.find(
         (fr) => fr.questionKey === descriptionKey
-      );
-      if (fromReferee === undefined) return "";
+      )
+      if (fromReferee === undefined) return ''
       const answers = fromReferee.answers.find(
         (ans) => ans.refereeId === answerId
-      );
-      if (isRequiredExcuse && answers) return answers.excuse;
-      else if (!isRequiredExcuse && answers) return true;
-      else "";
-    },
-  },
-};
+      )
+      if (isRequiredExcuse && answers) return answers.excuse
+      else if (!isRequiredExcuse && answers) return true
+      else ''
+    }
+  }
+}
 </script>
 
 <style lang="sass" scoped>

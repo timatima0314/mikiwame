@@ -54,154 +54,156 @@
     </el-form-item>
     <Notice :agree.sync="agree" style="margin-bottom: 1rem" />
     <div style="text-align: center">
-      <el-button type="primary" :disabled="!agree" @click="onClickSave"
-        >登録</el-button
-      >
+      <el-button
+        type="primary"
+        :disabled="!agree"
+        @click="onClickSave"
+      >登録</el-button>
     </div>
   </el-form>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import range from "lodash/range";
-import { functions } from "@/plugins/firebase";
-import { useCompany } from "@/utils/hooks/firestore";
-import Notice from "@/views/config/_components/notice";
-import { updateCompany } from "@/utils/hooks/firestore";
+import { mapGetters } from 'vuex'
+import range from 'lodash/range'
+import { functions } from '@/plugins/firebase'
+import { useCompany } from '@/utils/hooks/firestore'
+import Notice from '@/views/config/_components/notice'
+import { updateCompany } from '@/utils/hooks/firestore'
 
 export default {
-  name: "CreditCardInput",
+  name: 'CreditCardInput',
   components: { Notice },
   data: () => ({
     loading: false,
     form: {
-      cardNumber: "",
-      name: "",
+      cardNumber: '',
+      name: '',
       expireMonth: null,
       expireYear: null,
-      securityCode: "",
+      securityCode: ''
     },
     agree: false, // 特記事項の同意フラグ
     agreeInDB: false, // DBに保存されている同意フラグ
     tokenizeResult: {},
-    cardNumberInputMaxLength: 16 + 3, // 通常のカードは16桁。入力欄では空白3つを加えた16 + 3文字まで
+    cardNumberInputMaxLength: 16 + 3 // 通常のカードは16桁。入力欄では空白3つを加えた16 + 3文字まで
   }),
   computed: {
-    ...mapGetters(["companyId"]),
+    ...mapGetters(['companyId']),
     rules: () => ({
       securityCode: [
         {
           pattern: /^\d{3,4}$/,
-          trigger: "blur",
-          message: "セキュリティコードは3~4文字で入力してください",
-        },
-      ],
+          trigger: 'blur',
+          message: 'セキュリティコードは3~4文字で入力してください'
+        }
+      ]
     }),
     months: () =>
-      range(1, 12 + 1).map((month) => String(month).padStart(2, "0")), // e.g. ['01', '02', ...]
+      range(1, 12 + 1).map((month) => String(month).padStart(2, '0')), // e.g. ['01', '02', ...]
     years: () => {
-      const thisYear = new Date().getFullYear();
-      return range(10).map((add) => add + thisYear); // 10年後までを選択肢にする
+      const thisYear = new Date().getFullYear()
+      return range(10).map((add) => add + thisYear) // 10年後までを選択肢にする
     },
     cardObject() {
       return {
-        cardno: this.form.cardNumber.replace(/ /g, ""), // 空白を除去
+        cardno: this.form.cardNumber.replace(/ /g, ''), // 空白を除去
         expire: `${this.form.expireYear}${this.form.expireMonth}`, // YYYYMM
         securitycode: this.form.securityCode,
-        holdername: this.form.name,
-      };
-    },
+        holdername: this.form.name
+      }
+    }
   },
   async created() {
-    const { companyData } = await useCompany({ companyId: this.companyId });
-    this.agree = Boolean(companyData.isAgreeToNotice);
-    this.agreeInDB = this.agree;
+    const { companyData } = await useCompany({ companyId: this.companyId })
+    this.agree = Boolean(companyData.isAgreeToNotice)
+    this.agreeInDB = this.agree
   },
   mounted() {
     // クレジットカードをトークン化するMultipaymentを初期化
-    const paymentScript = document.createElement("script");
-    paymentScript.src = process.env.VUE_APP_PAYMENT_JS_URL;
-    document.body.appendChild(paymentScript);
+    const paymentScript = document.createElement('script')
+    paymentScript.src = process.env.VUE_APP_PAYMENT_JS_URL
+    document.body.appendChild(paymentScript)
     /* global Multipayment */
     setTimeout(() => {
-      Multipayment.init(process.env.VUE_APP_PAYMENT_JS_APIKEY);
-    }, 1000); // scriptタグの読み込みを1秒だけ待つ
+      Multipayment.init(process.env.VUE_APP_PAYMENT_JS_APIKEY)
+    }, 1000) // scriptタグの読み込みを1秒だけ待つ
   },
   methods: {
     onInputSecurityCode(inputNumber) {
-      this.form.securityCode = inputNumber.substring(0, 4); // セキュリティコード4桁まで
+      this.form.securityCode = inputNumber.substring(0, 4) // セキュリティコード4桁まで
     },
     // カード番号の入力に対して、適宜空白を追加する
     // カード会社の違いによる桁数の差も考慮
     // ref) https://github.com/muhammederdem/vue-interactive-paycard/blob/master/src/components/CardForm.vue#L198-L211
     addSpaceToCardNumber(inputString) {
-      this.form.cardNumber = inputString;
-      const value = this.form.cardNumber.replace(/\D/g, "");
+      this.form.cardNumber = inputString
+      const value = this.form.cardNumber.replace(/\D/g, '')
       if (/^3[47]\d{0,13}$/.test(value)) {
         // american express, 15 digits
         this.form.cardNumber = value
-          .replace(/(\d{4})/, "$1 ")
-          .replace(/(\d{4}) (\d{6})/, "$1 $2 ");
-        this.cardNumberMaxLength = 17;
+          .replace(/(\d{4})/, '$1 ')
+          .replace(/(\d{4}) (\d{6})/, '$1 $2 ')
+        this.cardNumberMaxLength = 17
       } else if (/^3(?:0[0-5]|[68]\d)\d{0,11}$/.test(value)) {
         // diner's club, 14 digits
         this.form.cardNumber = value
-          .replace(/(\d{4})/, "$1 ")
-          .replace(/(\d{4}) (\d{6})/, "$1 $2 ");
-        this.cardNumberMaxLength = 16;
+          .replace(/(\d{4})/, '$1 ')
+          .replace(/(\d{4}) (\d{6})/, '$1 $2 ')
+        this.cardNumberMaxLength = 16
       } else if (/^\d{0,16}$/.test(value)) {
         // regular cc number, 16 digits
         this.form.cardNumber = value
-          .replace(/(\d{4})/, "$1 ")
-          .replace(/(\d{4}) (\d{4})/, "$1 $2 ")
-          .replace(/(\d{4}) (\d{4}) (\d{4})/, "$1 $2 $3 ");
-        this.cardNumberMaxLength = 19;
+          .replace(/(\d{4})/, '$1 ')
+          .replace(/(\d{4}) (\d{4})/, '$1 $2 ')
+          .replace(/(\d{4}) (\d{4}) (\d{4})/, '$1 $2 $3 ')
+        this.cardNumberMaxLength = 19
       }
     },
     async onClickSave() {
-      this.loading = true;
+      this.loading = true
       if (!this.agreeInDB && this.agree) {
         // はじめて特記事項に同意した場合、DBのフラグを更新
         updateCompany({
           companyId: this.companyId,
-          data: { isAgreeToNotice: true },
-        }).catch(() => {});
+          data: { isAgreeToNotice: true }
+        }).catch(() => {})
       }
 
       try {
         // コールバック関数名を文字列で渡す必要がある。そのため、windowオブジェクトに関数を格納
         window.setTokenizeResult = (result) => {
-          this.tokenizeResult = result;
-        }; // e.g. tokenizeResult: { resultCode: '000', tokenObject: { token: 'tokentoken', ... } }
-        Multipayment.getToken(this.cardObject, "window.setTokenizeResult");
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // MultipaymentSDKが代入する処理を待つ。Vue.$nextTickで感知できない。
-        const { token, maskedCardNo } = this.tokenizeResult.tokenObject;
+          this.tokenizeResult = result
+        } // e.g. tokenizeResult: { resultCode: '000', tokenObject: { token: 'tokentoken', ... } }
+        Multipayment.getToken(this.cardObject, 'window.setTokenizeResult')
+        await new Promise((resolve) => setTimeout(resolve, 1000)) // MultipaymentSDKが代入する処理を待つ。Vue.$nextTickで感知できない。
+        const { token, maskedCardNo } = this.tokenizeResult.tokenObject
 
-        await functions.httpsCallable("createOrUpdateCreditCard")({
+        await functions.httpsCallable('createOrUpdateCreditCard')({
           companyId: this.companyId,
           token,
-          maskedCardNo,
-        });
+          maskedCardNo
+        })
         this.$notify({
-          type: "success",
-          title: "Success",
-          message: "カードの登録に成功しました",
-        });
-        this.$router.push({ name: "config" });
+          type: 'success',
+          title: 'Success',
+          message: 'カードの登録に成功しました'
+        })
+        this.$router.push({ name: 'config' })
       } catch (err) {
-        this.$rollbar.error(err.message);
+        this.$rollbar.error(err.message)
         this.$notify({
-          type: "error",
-          title: "Error",
+          type: 'error',
+          title: 'Error',
           message:
-            err.message === "INVALID_CARD"
-              ? "入力されたカードが有効ではありません"
-              : "カードの登録に失敗しました。通信環境を確認したうえで再度お試しください。",
-        });
+            err.message === 'INVALID_CARD'
+              ? '入力されたカードが有効ではありません'
+              : 'カードの登録に失敗しました。通信環境を確認したうえで再度お試しください。'
+        })
       } finally {
-        this.loading = false;
+        this.loading = false
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>

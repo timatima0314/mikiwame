@@ -10,11 +10,12 @@
         label-position="left"
       >
         <div style="text-align: center">
-          <img src="@/assets/logo.png" style="width: 100%" />
-          <br />
-          <router-link :to="{ name: 'clientLogin' }" class="link-color-primary"
-            >ログインはこちら</router-link
-          >
+          <img src="@/assets/logo.png" style="width: 100%">
+          <br>
+          <router-link
+            :to="{ name: 'clientLogin' }"
+            class="link-color-primary"
+          >ログインはこちら</router-link>
         </div>
 
         <el-form-item prop="email">
@@ -106,7 +107,7 @@
 
         <el-form-item prop="selectedPlan">
           <span class="label">プラン</span>
-          <br />
+          <br>
           <el-radio-group v-model="signupForm.selectedPlan" type="default">
             <el-radio :label="PLANS.LIGHT">ライトプラン</el-radio>
             <el-radio :label="PLANS.STANDARD">スタンダードプラン</el-radio>
@@ -115,7 +116,8 @@
             href="https://hrrt.co.jp/price/"
             target="_blank"
             style="float: right"
-            >料金はこちら<i class="el-icon-top-right"
+          >料金はこちら<i
+            class="el-icon-top-right"
           /></a>
         </el-form-item>
 
@@ -128,8 +130,7 @@
             class="login-button"
             :disabled="!agree"
             @click.native.prevent="handleSignup"
-            >新規登録</el-button
-          >
+          >新規登録</el-button>
         </div>
       </el-form>
     </div>
@@ -137,37 +138,37 @@
 </template>
 
 <script>
-import firebase from "firebase/app";
-import { mapGetters } from "vuex";
-import { emailRules, passwordRules } from "@/constants/validation";
-import { functions, companiesCollectionRef } from "@/plugins/firebase";
-import TermsOfService from "./_terms_of_service";
-import { PLANS } from "@/utils/payment";
+import firebase from 'firebase/app'
+import { mapGetters } from 'vuex'
+import { emailRules, passwordRules } from '@/constants/validation'
+import { functions, companiesCollectionRef } from '@/plugins/firebase'
+import TermsOfService from './_terms_of_service'
+import { PLANS } from '@/utils/payment'
 
 export default {
-  name: "SignUp",
+  name: 'SignUp',
   components: { TermsOfService },
   data() {
     return {
       signupForm: {
-        email: "",
+        email: '',
         zipcode: null,
-        address1: "",
-        address2: "",
-        companyName: "",
-        staffName: "",
-        password: "",
-        confirmationPassword: "",
-        selectedPlan: PLANS.LIGHT,
+        address1: '',
+        address2: '',
+        companyName: '',
+        staffName: '',
+        password: '',
+        confirmationPassword: '',
+        selectedPlan: PLANS.LIGHT
       },
       loading: false,
-      passwordType: "password",
+      passwordType: 'password',
       redirect: undefined,
-      agree: false,
-    };
+      agree: false
+    }
   },
   computed: {
-    ...mapGetters(["isAdmin"]),
+    ...mapGetters(['isAdmin']),
     PLANS: () => PLANS,
     loginRules() {
       return {
@@ -175,76 +176,76 @@ export default {
         companyName: [
           {
             required: true,
-            trigger: "blur",
-            message: "会社名を入力してください",
-          },
+            trigger: 'blur',
+            message: '会社名を入力してください'
+          }
         ],
         staffName: [
           {
             required: true,
-            trigger: "blur",
-            message: "お名前を入力してください",
-          },
+            trigger: 'blur',
+            message: 'お名前を入力してください'
+          }
         ],
         zipcode: [
           {
             required: true,
-            trigger: "blur",
-            message: "郵便番号を入力してください",
-          },
+            trigger: 'blur',
+            message: '郵便番号を入力してください'
+          }
         ],
         address1: [
           {
             required: true,
-            trigger: "blur",
-            message: "ご住所を入力してください",
-          },
+            trigger: 'blur',
+            message: 'ご住所を入力してください'
+          }
         ],
-        password: passwordRules,
-      };
+        password: passwordRules
+      }
     },
     isAdminLogin() {
-      return this.$route.name === "adminLogin";
-    },
+      return this.$route.name === 'adminLogin'
+    }
   },
   watch: {
     $route: {
-      handler: function (route) {
-        this.redirect = route.query && route.query.redirect;
+      handler: function(route) {
+        this.redirect = route.query && route.query.redirect
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     showPwd() {
-      if (this.passwordType === "password") {
-        this.passwordType = "";
+      if (this.passwordType === 'password') {
+        this.passwordType = ''
       } else {
-        this.passwordType = "password";
+        this.passwordType = 'password'
       }
       this.$nextTick(() => {
-        this.$refs.password.focus();
-      });
+        this.$refs.password.focus()
+      })
     },
     async handleSignup() {
       if (this.signupForm.password !== this.signupForm.confirmationPassword) {
         return this.$alert(
-          "入力内容をお確かめください",
-          "パスワードが一致しません",
+          '入力内容をお確かめください',
+          'パスワードが一致しません',
           {
-            confirmButtonText: "Close",
-            type: "warning",
+            confirmButtonText: 'Close',
+            type: 'warning'
           }
-        );
+        )
       }
 
       try {
-        await this.$refs.signupForm.validate();
+        await this.$refs.signupForm.validate()
       } catch {
-        return;
+        return
       }
 
-      this.loading = true;
+      this.loading = true
       // ユーザー登録とcompaniesコレクションの追加を行う
       const createUserResult = await firebase
         .auth()
@@ -253,18 +254,18 @@ export default {
           this.signupForm.password
         )
         .catch((err) => {
-          this.loading = false;
-          this.$rollbar.error(err);
-          if (err.code === "auth/email-already-in-use") {
+          this.loading = false
+          this.$rollbar.error(err)
+          if (err.code === 'auth/email-already-in-use') {
             this.$message({
-              message: "すでに登録済みのメールアドレスです",
-              type: "error",
-            });
+              message: 'すでに登録済みのメールアドレスです',
+              type: 'error'
+            })
           }
-        });
-      if (createUserResult == null) return;
+        })
+      if (createUserResult == null) return
 
-      const { user } = createUserResult;
+      const { user } = createUserResult
       try {
         // 会社を登録する
         const companyDocumentRef = await companiesCollectionRef.add({
@@ -280,28 +281,28 @@ export default {
           createdAt: new Date(),
           isBusinessCardRequired: true,
           isFreemailAllowed: false,
-          loginCount: 0,
-        });
+          loginCount: 0
+        })
 
         // 通知に失敗しても処理は止めないようにエラーを握りつぶす
         await functions
-          .httpsCallable("notifyAdminClientSignup")({
-            companyId: companyDocumentRef.id,
+          .httpsCallable('notifyAdminClientSignup')({
+            companyId: companyDocumentRef.id
           })
-          .catch(() => {});
-        this.$router.push({ name: "signupPhone" });
+          .catch(() => {})
+        this.$router.push({ name: 'signupPhone' })
       } catch (err) {
-        this.$rollbar.error(err);
-        this.loading = false;
+        this.$rollbar.error(err)
+        this.loading = false
         // 会社の登録に失敗したら、新規登録をやり直せるようにユーザーを削除しておく
         this.$message({
           message:
-            "登録に失敗しました。通信環境を確認したうえで再度お試しください。",
-          type: "error",
-        });
-        await user.delete();
+            '登録に失敗しました。通信環境を確認したうえで再度お試しください。',
+          type: 'error'
+        })
+        await user.delete()
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>

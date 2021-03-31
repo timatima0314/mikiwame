@@ -50,12 +50,14 @@
     </el-form>
 
     <el-tabs v-model="showingQuestionType" type="card">
-      <el-tab-pane label="記述式" name="descriptions"
-        ><h3>記述式の質問({{ descriptionsLength }}問)</h3></el-tab-pane
-      >
-      <el-tab-pane label="選択式" name="selections"
-        ><h3>選択式の質問({{ selectionsLength }}問)</h3></el-tab-pane
-      >
+      <el-tab-pane
+        label="記述式"
+        name="descriptions"
+      ><h3>記述式の質問({{ descriptionsLength }}問)</h3></el-tab-pane>
+      <el-tab-pane
+        label="選択式"
+        name="selections"
+      ><h3>選択式の質問({{ selectionsLength }}問)</h3></el-tab-pane>
     </el-tabs>
 
     <template v-if="showingQuestionType === 'descriptions'">
@@ -72,67 +74,76 @@
           type="textarea"
           placeholder="オリジナルの質問を入力してください"
         />
-        <el-button type="info" @click="addDescriptionQuestion"
-          >独自の質問を追加する</el-button
-        >
-        <el-button type="info" @click="resetQuestion"
-          >質問をもとに戻す</el-button
-        >
+        <el-button
+          type="info"
+          @click="addDescriptionQuestion"
+        >独自の質問を追加する</el-button>
+        <el-button
+          type="info"
+          @click="resetQuestion"
+        >質問をもとに戻す</el-button>
       </el-card>
     </template>
 
     <el-card v-else-if="showingQuestionType === 'selections'">
       <div v-for="(question, i) in form[questionsLang].selections" :key="i">
         <el-row type="flex" justify="space-between" align="middle">
+          <el-col><p class="strong font-big" style="text-align: left">
+            {{ i + 1 }}. {{ question.text }}
+          </p></el-col>
           <el-col
-            ><p class="strong font-big" style="text-align: left">
-              {{ i + 1 }}. {{ question.text }}
-            </p></el-col
-          >
-          <el-col :span="2"
-            ><el-button icon="el-icon-lock" type="info" circle disabled
+            :span="2"
+          ><el-button
+            icon="el-icon-lock"
+            type="info"
+            circle
+            disabled
           /></el-col>
         </el-row>
-        <hr style="border-style: dashed; color: grey" />
+        <hr style="border-style: dashed; color: grey">
       </div>
     </el-card>
-    <hr />
+    <hr>
 
-    <el-button v-if="isAdd" type="primary" @click="addTemplateQuestions"
-      >保存する</el-button
-    >
-    <el-button v-else type="primary" @click="editTemplateQuestions"
-      >編集内容を保存する</el-button
-    >
+    <el-button
+      v-if="isAdd"
+      type="primary"
+      @click="addTemplateQuestions"
+    >保存する</el-button>
+    <el-button
+      v-else
+      type="primary"
+      @click="editTemplateQuestions"
+    >編集内容を保存する</el-button>
   </el-dialog>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import Vue from "vue";
-import VueMq from "vue-mq"; // PCかモバイルを判断
-import cloneDeep from "lodash/cloneDeep";
-import EditableQuestions from "@/components/EditableQuestions";
+import { mapGetters } from 'vuex'
+import Vue from 'vue'
+import VueMq from 'vue-mq' // PCかモバイルを判断
+import cloneDeep from 'lodash/cloneDeep'
+import EditableQuestions from '@/components/EditableQuestions'
 import {
   getDefaultQuestionsByLang,
-  getDefaultQuestionsForRookieByLang,
-} from "@/constants/questions";
-import { companiesCollectionRef } from "@/plugins/firebase";
-import { updateTemplateQuestions } from "@/utils/hooks/firestore";
-import { getAnswererRanks, getQuestionsLangByLang } from "@/constants/options";
+  getDefaultQuestionsForRookieByLang
+} from '@/constants/questions'
+import { companiesCollectionRef } from '@/plugins/firebase'
+import { updateTemplateQuestions } from '@/utils/hooks/firestore'
+import { getAnswererRanks, getQuestionsLangByLang } from '@/constants/options'
 
 const breakpoints = {
   sp: 800,
-  pc: 2000,
-};
+  pc: 2000
+}
 
-Vue.use(VueMq, { breakpoints });
+Vue.use(VueMq, { breakpoints })
 
 /*
  * @use <add-target-modal :is-modal-open.sync="isModalOpen" :company-document-ref="companyDocumentRef" />
  */
 export default {
-  name: "AddEditTemplateQuestions",
+  name: 'AddEditTemplateQuestions',
   components: { EditableQuestions },
   props: {
     isModalOpen: { type: Boolean, default: false },
@@ -140,178 +151,177 @@ export default {
     templateQuestionsData: {
       type: Object,
       default: () => ({
-        name: "",
-        jp: getDefaultQuestionsByLang("jp"),
-        en: getDefaultQuestionsByLang("en"),
-        cn: getDefaultQuestionsByLang("cn"),
-        templateType: "fulltime",
-      }),
-    },
+        name: '',
+        jp: getDefaultQuestionsByLang('jp'),
+        en: getDefaultQuestionsByLang('en'),
+        cn: getDefaultQuestionsByLang('cn'),
+        templateType: 'fulltime'
+      })
+    }
   },
   data() {
     return {
       loading: false,
-      questionsLang: "jp",
-      showingQuestionType: "descriptions",
-      newQuestionText: "",
+      questionsLang: 'jp',
+      showingQuestionType: 'descriptions',
+      newQuestionText: '',
       form: {
-        name: "",
-        jp: getDefaultQuestionsByLang("jp"),
-        en: getDefaultQuestionsByLang("en"),
-        cn: getDefaultQuestionsByLang("cn"),
-        templateType: "fulltime",
+        name: '',
+        jp: getDefaultQuestionsByLang('jp'),
+        en: getDefaultQuestionsByLang('en'),
+        cn: getDefaultQuestionsByLang('cn'),
+        templateType: 'fulltime'
       },
-      answererRanks: getAnswererRanks(),
-    };
+      answererRanks: getAnswererRanks()
+    }
   },
   computed: {
-    ...mapGetters(["companyId"]),
+    ...mapGetters(['companyId']),
     descriptionsLength() {
-      return this.form[this.questionsLang]?.descriptions.length ?? 0;
+      return this.form[this.questionsLang]?.descriptions.length ?? 0
     },
     selectionsLength() {
-      return this.form[this.questionsLang]?.selections.length ?? 0;
+      return this.form[this.questionsLang]?.selections.length ?? 0
     },
     rules: () => ({
       name: [
         {
           required: true,
-          message: "テンプレートの名前を入力してください",
-          trigger: "blur",
-        },
-      ],
+          message: 'テンプレートの名前を入力してください',
+          trigger: 'blur'
+        }
+      ]
     }),
     options: () => ({
-      questionsLang: getQuestionsLangByLang(),
-    }),
+      questionsLang: getQuestionsLangByLang()
+    })
   },
   watch: {
     isModalOpen() {
-      this.templateQuestionsDataToForm(); // modalを開く（閉じる）タイミングで
-      this.questionsLang = "jp";
-    },
+      this.templateQuestionsDataToForm() // modalを開く（閉じる）タイミングで
+      this.questionsLang = 'jp'
+    }
   },
   methods: {
     toggleLoading() {
-      this.loading = !this.loading;
+      this.loading = !this.loading
     },
     templateQuestionsDataToForm() {
-      this.form = cloneDeep(this.templateQuestionsData);
+      this.form = cloneDeep(this.templateQuestionsData)
     },
     close() {
-      this.$emit("update:isModalOpen", false);
+      this.$emit('update:isModalOpen', false)
     },
     // 質問を追加
     addDescriptionQuestion() {
-      if (!this.newQuestionText)
-        return this.$message("質問が入力されていません");
+      if (!this.newQuestionText) { return this.$message('質問が入力されていません') }
 
       this.form[this.questionsLang].descriptions.push({
         key: `original_${new Date().getTime()}`,
-        text: this.newQuestionText,
-      });
+        text: this.newQuestionText
+      })
 
-      this.newQuestionText = "";
+      this.newQuestionText = ''
     },
     // 質問を元に戻す
     resetQuestion() {
       if (this.isAdd) {
         this.form[this.questionsLang].descriptions =
-          this.form.templateType === "rookie"
+          this.form.templateType === 'rookie'
             ? cloneDeep(
-                getDefaultQuestionsForRookieByLang(this.questionsLang)
-                  .descriptions
-              )
+              getDefaultQuestionsForRookieByLang(this.questionsLang)
+                .descriptions
+            )
             : cloneDeep(
-                getDefaultQuestionsByLang(this.questionsLang).descriptions
-              );
+              getDefaultQuestionsByLang(this.questionsLang).descriptions
+            )
       } else {
         this.form[this.questionsLang].descriptions =
-          this.templateQuestionsData[this.questionsLang]?.descriptions ?? [];
+          this.templateQuestionsData[this.questionsLang]?.descriptions ?? []
       }
     },
     adaptQuestionToRank(label) {
       this.form[this.questionsLang] =
-        label === "rookie"
+        label === 'rookie'
           ? getDefaultQuestionsForRookieByLang(this.questionsLang)
-          : getDefaultQuestionsByLang(this.questionsLang);
+          : getDefaultQuestionsByLang(this.questionsLang)
     },
     // 新規質問テンプレートの追加
     async addTemplateQuestions() {
-      const valid = await this.$refs.form.validate().catch(() => {});
+      const valid = await this.$refs.form.validate().catch(() => {})
       if (!valid) {
         this.$notify({
-          type: "error",
-          title: "Error",
-          message: "入力に不備がございます",
-        });
-        return;
+          type: 'error',
+          title: 'Error',
+          message: '入力に不備がございます'
+        })
+        return
       }
 
-      this.toggleLoading();
+      this.toggleLoading()
       companiesCollectionRef
         .doc(this.companyId)
-        .collection("templateQuestions")
+        .collection('templateQuestions')
         .add({
           createdAt: new Date(),
           name: this.form.name,
-          jp: this.form["jp"],
-          en: this.form["en"],
-          cn: this.form["cn"],
-          templateType: this.form.templateType,
+          jp: this.form['jp'],
+          en: this.form['en'],
+          cn: this.form['cn'],
+          templateType: this.form.templateType
         })
-        .then(async (docRef) => {
+        .then(async(docRef) => {
           await updateTemplateQuestions({
             companyId: this.companyId,
             templateQuestionsId: docRef.id,
-            data: { id: docRef.id },
-          });
-          this.close();
+            data: { id: docRef.id }
+          })
+          this.close()
         })
         .catch((err) => {
-          this.$rollbar.error(err);
+          this.$rollbar.error(err)
           this.$alert(
-            "通信環境を確認したうえで再度お試しください。",
-            "解析対象の追加に失敗しました"
-          );
+            '通信環境を確認したうえで再度お試しください。',
+            '解析対象の追加に失敗しました'
+          )
         })
-        .finally(this.toggleLoading);
+        .finally(this.toggleLoading)
     },
     // 編集した質問テンプレートの保存
     async editTemplateQuestions() {
-      const valid = await this.$refs.form.validate().catch(() => {});
+      const valid = await this.$refs.form.validate().catch(() => {})
       if (!valid) {
         this.$notify({
-          type: "error",
-          title: "Error",
-          message: "入力に不備がございます",
-        });
-        return;
+          type: 'error',
+          title: 'Error',
+          message: '入力に不備がございます'
+        })
+        return
       }
 
-      this.toggleLoading();
+      this.toggleLoading()
       updateTemplateQuestions({
         companyId: this.companyId,
         templateQuestionsId: this.templateQuestionsData.id,
-        data: { ...this.form },
+        data: { ...this.form }
       })
         .then(() => {
           this.$message({
-            message: "更新に成功しました",
-            type: "success",
-          });
-          this.close();
+            message: '更新に成功しました',
+            type: 'success'
+          })
+          this.close()
         })
         .catch((err) => {
-          this.$rollbar.error(err);
+          this.$rollbar.error(err)
           this.$message({
             message:
-              "更新に失敗しました。通信環境を確認したうえで再度お試しください。",
-            type: "error",
-          });
+              '更新に失敗しました。通信環境を確認したうえで再度お試しください。',
+            type: 'error'
+          })
         })
-        .finally(this.toggleLoading);
-    },
-  },
-};
+        .finally(this.toggleLoading)
+    }
+  }
+}
 </script>

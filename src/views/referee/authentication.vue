@@ -40,8 +40,7 @@
           type="primary"
           class="login-button"
           @click.native.prevent="phoneNumberRegistration"
-          >{{ refereeI18n.t("message.sendCode") }}</el-button
-        >
+        >{{ refereeI18n.t("message.sendCode") }}</el-button>
       </el-form>
 
       <el-form
@@ -69,8 +68,7 @@
             type="info"
             class="login-button login-button-secondary"
             @click="onClickBack"
-            >{{ refereeI18n.t("message.reEnterNumber") }}</el-button
-          >
+          >{{ refereeI18n.t("message.reEnterNumber") }}</el-button>
         </div>
         <el-button
           :loading="loading"
@@ -78,32 +76,31 @@
           native-type="submit"
           style="margin: 10px 0 0 0"
           class="login-button"
-          >{{ commonI18n.t("message.confirm") }}</el-button
-        >
+        >{{ commonI18n.t("message.confirm") }}</el-button>
       </el-form>
     </div>
   </section>
 </template>
 
 <script>
-import firebase from "firebase/app";
+import firebase from 'firebase/app'
 import {
   formatPhoneNumber,
   normalizePhoneNumber,
-  anonymizePhoneNumber,
-} from "@/utils/phone";
-import { functions } from "@/plugins/firebase";
-import { telRules } from "@/constants/validation";
-import { RefereeApi } from "@/utils/api/referee_api";
-import { refereePageMixin } from "./mixin/refereePageMixin";
+  anonymizePhoneNumber
+} from '@/utils/phone'
+import { functions } from '@/plugins/firebase'
+import { telRules } from '@/constants/validation'
+import { RefereeApi } from '@/utils/api/referee_api'
+import { refereePageMixin } from './mixin/refereePageMixin'
 
 const STATUSES = {
-  INPUT_PHONE_NUMBER: "INPUT_PHONE_NUMBER",
-  INPUT_VERIFY_CODE: "INPUT_VERIFY_CODE",
-};
+  INPUT_PHONE_NUMBER: 'INPUT_PHONE_NUMBER',
+  INPUT_VERIFY_CODE: 'INPUT_VERIFY_CODE'
+}
 
 export default {
-  name: "Authentication",
+  name: 'Authentication',
   mixins: [refereePageMixin],
   data() {
     return {
@@ -113,75 +110,76 @@ export default {
       currentUser: null,
       verificationCode: null,
       form: {
-        tel: "",
+        tel: ''
       },
-      email: "",
+      email: '',
       redirect: undefined,
-      isBeforeRegisteringPhone: true, // 電話番号登録前であるか
-    };
+      isBeforeRegisteringPhone: true // 電話番号登録前であるか
+    }
   },
   computed: {
     STATUSES: () => STATUSES,
     rules: () => ({ tel: telRules }),
     convertedPhoneNumber() {
-      return anonymizePhoneNumber(normalizePhoneNumber(this.form.tel));
-    },
+      return anonymizePhoneNumber(normalizePhoneNumber(this.form.tel))
+    }
   },
   watch: {
     $route: {
-      handler: function (route) {
-        this.redirect = route.query && route.query.redirect;
+      handler: function(route) {
+        this.redirect = route.query && route.query.redirect
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   async created() {
-    await this.setup();
+    await this.setup()
 
     // 回答済み,又は期限切れであれば認証させない(URLを書き換えてページに飛んできたことを想定)
-    if (this.referee.completedAt || this.isAfterDeadline)
+    if (this.referee.completedAt || this.isAfterDeadline) {
       this.$router.push({
-        name: "refereeChoiceRoute",
-        query: this.$route.query,
-      });
+        name: 'refereeChoiceRoute',
+        query: this.$route.query
+      })
+    }
     // 既に電話番号の登録が行われているが回答は完了していない場合
     else if (this.referee.phoneNumber) {
-      this.status = STATUSES.INPUT_VERIFY_CODE;
-      this.isBeforeRegisteringPhone = false;
-      this.form.tel = this.referee.phoneNumber;
-      this.sendVerificationCode();
+      this.status = STATUSES.INPUT_VERIFY_CODE
+      this.isBeforeRegisteringPhone = false
+      this.form.tel = this.referee.phoneNumber
+      this.sendVerificationCode()
     }
-    this.toggleLoading();
+    this.toggleLoading()
   },
   mounted() {
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-      "referee-authentication-button",
-      { size: "invisible" }
-    );
+      'referee-authentication-button',
+      { size: 'invisible' }
+    )
   },
   methods: {
     onClickBack() {
-      this.status = STATUSES.INPUT_PHONE_NUMBER;
+      this.status = STATUSES.INPUT_PHONE_NUMBER
     },
     async phoneNumberRegistration() {
-      const valid = await this.$refs.form.validate().catch(() => {});
-      if (valid === undefined) return;
+      const valid = await this.$refs.form.validate().catch(() => {})
+      if (valid === undefined) return
 
-      this.loading = true;
+      this.loading = true
       const {
-        data: { registered },
+        data: { registered }
       } = await functions
-        .httpsCallable("isRefereePhoneNumberRegistered")({
-          phoneNumber: this.form.tel,
+        .httpsCallable('isRefereePhoneNumberRegistered')({
+          phoneNumber: this.form.tel
         })
         .catch((err) => {
-          this.$rollbar.error(err);
+          this.$rollbar.error(err)
           this.$message({
-            message: this.notifyI18n.t("message.errorPleaseAgain"),
-            type: "error",
-          });
-          this.loading = false;
-        });
+            message: this.notifyI18n.t('message.errorPleaseAgain'),
+            type: 'error'
+          })
+          this.loading = false
+        })
 
       // <!--authに登録済み-->，又は候補者の電話番号と同一，又は既に登録済みの推薦者の電話番号と同一，の場合は弾く
       if (
@@ -190,13 +188,13 @@ export default {
         this.refereesPhoneNumber.includes(this.form.tel)
       ) {
         this.$message({
-          message: this.refereeI18n.t("message.numberIsAlreadyRegistered"),
-          type: "error",
-        });
-        this.loading = false;
-        return;
+          message: this.refereeI18n.t('message.numberIsAlreadyRegistered'),
+          type: 'error'
+        })
+        this.loading = false
+        return
       }
-      this.sendVerificationCode();
+      this.sendVerificationCode()
     },
     sendVerificationCode() {
       firebase
@@ -206,80 +204,80 @@ export default {
           window.recaptchaVerifier
         )
         .then((confirmationResult) => {
-          this.confirmationResult = confirmationResult;
-          this.status = STATUSES.INPUT_VERIFY_CODE;
+          this.confirmationResult = confirmationResult
+          this.status = STATUSES.INPUT_VERIFY_CODE
         })
         .catch((err) => {
-          if (err.code === "auth/invalid-phone-number") {
+          if (err.code === 'auth/invalid-phone-number') {
             this.$message({
-              message: this.refereeI18n.t("message.invalidNumber"),
-              type: "error",
-            });
+              message: this.refereeI18n.t('message.invalidNumber'),
+              type: 'error'
+            })
           } else {
             this.$message({
-              message: this.notifyI18n.t("message.errorPleaseAgain"),
-              type: "error",
-            });
-            this.$rollbar.error(err);
+              message: this.notifyI18n.t('message.errorPleaseAgain'),
+              type: 'error'
+            })
+            this.$rollbar.error(err)
           }
         })
         .finally(() => {
-          this.loading = false;
-        });
+          this.loading = false
+        })
     },
     async verifyCode() {
-      this.loading = true;
+      this.loading = true
       await this.confirmationResult
         .confirm(this.verificationCode)
-        .then(async (result) => {
+        .then(async(result) => {
           this.$notify({
-            type: "success",
-            title: "Success",
-            message: this.refereeI18n.t("message.successfullyVerified"),
-          });
+            type: 'success',
+            title: 'Success',
+            message: this.refereeI18n.t('message.successfullyVerified')
+          })
           const {
             company: companyId,
             talent: talentId,
-            token: refereeId,
-          } = this.$route.query;
+            token: refereeId
+          } = this.$route.query
           // 電話番号をfirestoreに記録
           await RefereeApi({ companyId, talentId, refereeId }).updateAll([
-            { id: refereeId, phoneNumber: this.form.tel },
-          ]);
+            { id: refereeId, phoneNumber: this.form.tel }
+          ])
           this.$router.push({
-            name: "answerDescriptions",
-            query: this.$route.query,
-          });
+            name: 'answerDescriptions',
+            query: this.$route.query
+          })
         })
         .catch((err) => {
-          if (err.code === "auth/invalid-verification-code") {
+          if (err.code === 'auth/invalid-verification-code') {
             this.$message({
-              message: this.refereeI18n.t("message.wrongAuthorizationCode"),
-              type: "error",
-            });
+              message: this.refereeI18n.t('message.wrongAuthorizationCode'),
+              type: 'error'
+            })
           } else {
             this.$message({
-              message: this.notifyI18n.t("message.errorPleaseAgain"),
-              type: "error",
-            });
-            this.$rollbar.error(err);
+              message: this.notifyI18n.t('message.errorPleaseAgain'),
+              type: 'error'
+            })
+            this.$rollbar.error(err)
           }
         })
         .finally(() => {
-          this.loading = false;
-        });
+          this.loading = false
+        })
     },
     gotoNext() {
       this.descriptionsLength === 0
         ? this.$router.push({
-            name: "answerSelections",
-            query: this.$route.query,
-          })
+          name: 'answerSelections',
+          query: this.$route.query
+        })
         : this.$router.push({
-            name: "answerDescriptions",
-            query: this.$route.query,
-          });
-    },
-  },
-};
+          name: 'answerDescriptions',
+          query: this.$route.query
+        })
+    }
+  }
+}
 </script>

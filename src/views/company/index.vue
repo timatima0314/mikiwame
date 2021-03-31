@@ -18,7 +18,7 @@
       >
         <div style="text-align: center">
           <h3>
-            以下のテキストをコピーしました。<br />
+            以下のテキストをコピーしました。<br>
             {{
               selectedTalentData.name
             }}さんに伝えて推薦者登録を依頼してください
@@ -28,9 +28,10 @@
           {{ linkToTalentPage }}
         </div>
         <div style="text-align: right; margin-top: 1rem">
-          <el-button type="primary" @click="urlDialogFlag = false"
-            >OK</el-button
-          >
+          <el-button
+            type="primary"
+            @click="urlDialogFlag = false"
+          >OK</el-button>
         </div>
       </el-dialog>
       <el-aside width="350px">
@@ -71,8 +72,7 @@
                 style="display: none"
                 class="delete-talent-button"
                 @click="deleteTalent(target)"
-                >×</el-button
-              >
+              >×</el-button>
               <div class="card-header">
                 <el-tag
                   :type="isOverdue(target.deadline) ? 'danger' : 'info'"
@@ -146,22 +146,19 @@
                   type="success"
                   icon="el-icon-edit"
                   @click="isUpdateModalOpen = true"
-                  >編集する</el-button
-                >
+                >編集する</el-button>
                 <el-button
                   type="secondary"
                   icon="el-icon-message"
                   @click="onClickSendEmail(selectedTalentData)"
-                  >メール送信</el-button
-                >
+                >メール送信</el-button>
 
                 <el-button
                   v-clipboard:copy="linkToTalentPage"
                   icon="el-icon-copy-document"
                   type="primary"
                   @click="urlDialogFlag = true"
-                  >URLコピー</el-button
-                >
+                >URLコピー</el-button>
                 <el-button
                   type="info"
                   icon="el-icon-s-order"
@@ -170,8 +167,7 @@
                       `/company/talents/${selectedTalentData.id}/report`
                     )
                   "
-                  >レポート</el-button
-                >
+                >レポート</el-button>
               </div>
             </el-card>
 
@@ -211,28 +207,28 @@
 </template>
 
 <script>
-import dayjs from "dayjs";
-import defaultTo from "lodash/defaultTo";
-import get from "lodash/get";
-import isEmpty from "lodash/isEmpty";
-import { mapGetters } from "vuex";
-import { functions, companiesStorageRef } from "@/plugins/firebase";
-import { useCompany, getReferees, updateTalent } from "@/utils/hooks/firestore";
-import { getJobCategoryOptionsByLang } from "@/constants/options";
-import { statusProperty } from "@/constants/status";
-import AddTalentModal from "@/components/AddTalentModal";
-import AddTalentBulkModal from "@/components/AddTalentBulkModal";
-import GuideGrid from "@/components/GuideGrid";
-import TalentEdit from "@/components/TalentEdit";
-import TalentDataGraph from "@/components/TalentDataGraph";
-import RiskCheck from "@/components/TalentDetailMenu/risk_check";
-import Status from "@/components/TalentDetailMenu/status";
-import RefereeList from "@/components/TalentDetailMenu/referee_list";
-import { PLAN_STATUSES } from "@/utils/plan_statuses";
-import { getI18n } from "@/constants/i18n";
+import dayjs from 'dayjs'
+import defaultTo from 'lodash/defaultTo'
+import get from 'lodash/get'
+import isEmpty from 'lodash/isEmpty'
+import { mapGetters } from 'vuex'
+import { functions, companiesStorageRef } from '@/plugins/firebase'
+import { useCompany, getReferees, updateTalent } from '@/utils/hooks/firestore'
+import { getJobCategoryOptionsByLang } from '@/constants/options'
+import { statusProperty } from '@/constants/status'
+import AddTalentModal from '@/components/AddTalentModal'
+import AddTalentBulkModal from '@/components/AddTalentBulkModal'
+import GuideGrid from '@/components/GuideGrid'
+import TalentEdit from '@/components/TalentEdit'
+import TalentDataGraph from '@/components/TalentDataGraph'
+import RiskCheck from '@/components/TalentDetailMenu/risk_check'
+import Status from '@/components/TalentDetailMenu/status'
+import RefereeList from '@/components/TalentDetailMenu/referee_list'
+import { PLAN_STATUSES } from '@/utils/plan_statuses'
+import { getI18n } from '@/constants/i18n'
 
 export default {
-  name: "Dashboard",
+  name: 'Dashboard',
   components: {
     AddTalentModal,
     AddTalentBulkModal,
@@ -241,7 +237,7 @@ export default {
     RiskCheck,
     Status,
     RefereeList,
-    TalentDataGraph,
+    TalentDataGraph
   },
   data() {
     return {
@@ -249,90 +245,90 @@ export default {
       isModalOpen: false,
       isBulkModalOpen: false,
       isUpdateModalOpen: false,
-      searchText: "",
+      searchText: '',
       listLoading: false,
       refereeLoading: false,
       fullScreenLoading: false,
-      riskEyesId: "",
+      riskEyesId: '',
       talents: [],
       filteredTalents: [],
       selectedTalentData: {},
-      referees: [{ name: "", email: "", belongs: "" }],
+      referees: [{ name: '', email: '', belongs: '' }],
       unsubscribe: () => {},
-      urlDialogFlag: false,
-    };
+      urlDialogFlag: false
+    }
   },
   computed: {
-    ...mapGetters(["user", "isAdmin", "companyId", "planStatus"]),
+    ...mapGetters(['user', 'isAdmin', 'companyId', 'planStatus']),
     talentsUndeleted() {
-      return this.talents.filter((talent) => !talent.deletedAt);
+      return this.talents.filter((talent) => !talent.deletedAt)
     },
     // 文字列検索した候補者群
     stringSearchedTalents() {
       return this.searchText
         ? this.filteredTalents.filter((target) =>
-            JSON.stringify(Object.values(target)).includes(this.searchText)
-          )
-        : this.filteredTalents;
+          JSON.stringify(Object.values(target)).includes(this.searchText)
+        )
+        : this.filteredTalents
     },
     isLightPlan() {
-      return this.planStatus !== PLAN_STATUSES.STANDARD;
+      return this.planStatus !== PLAN_STATUSES.STANDARD
     },
     talentI18n() {
-      const i18n = getI18n("talent");
+      const i18n = getI18n('talent')
       if (this.selectedTalentData.language) {
-        i18n.locale = this.selectedTalentData.language;
-      } else i18n.locale = "jp";
-      return i18n;
+        i18n.locale = this.selectedTalentData.language
+      } else i18n.locale = 'jp'
+      return i18n
     },
     linkToTalentPage() {
-      const text = this.talentI18n.t("message.messageAndURLForTalent");
-      return `${text} ${location.origin}/talent/instruction?company=${this.companyId}&token=${this.selectedTalentData.id}`;
-    },
+      const text = this.talentI18n.t('message.messageAndURLForTalent')
+      return `${text} ${location.origin}/talent/instruction?company=${this.companyId}&token=${this.selectedTalentData.id}`
+    }
   },
   async created() {
-    this.listLoading = true;
+    this.listLoading = true
     const { companyDocumentSnapshot, companyData } = await useCompany({
-      companyId: this.companyId,
-    });
-    this.riskEyesId = companyData.riskEyesId;
+      companyId: this.companyId
+    })
+    this.riskEyesId = companyData.riskEyesId
     // 最終更新日が新しい順に表示したいのに、ascで並び替えている理由
     // 1. 新しくデータが追加された際、unshiftで先頭に追加したい。
     // 2. 初回読み込み時もデータ追加時もchange.typeはaddedになる。つまり区別がつかない
     // cf) https://firebase.google.com/docs/firestore/query-data/listen?hl=ja#view_changes_between_snapshots
     // 3. 初回読み込み時もデータ追加時と同じようにunshiftする都合上、descではなくascで並び替える
     const talentsQuery = companyDocumentSnapshot.ref
-      .collection("talents")
-      .orderBy("createdAt", "asc");
+      .collection('talents')
+      .orderBy('createdAt', 'asc')
     this.unsubscribe = talentsQuery.onSnapshot((snapshot) => {
       snapshot.docChanges().forEach((change) => {
         switch (change.type) {
-          case "added": // 初回取得時 or データ追加時
+          case 'added': // 初回取得時 or データ追加時
             this.talents.unshift({
               deletedAt: null,
               ...change.doc.data(),
-              id: change.doc.id,
-            });
-            break;
-          case "modified":
+              id: change.doc.id
+            })
+            break
+          case 'modified':
             Object.assign(
               this.talents.find(({ id }) => id === change.doc.id) || {},
               change.doc.data()
-            );
-            break;
-          case "removed":
+            )
+            break
+          case 'removed':
             this.talents.splice(
               this.talents.map((target) => target.id).indexOf(change.doc.id),
               1
-            );
-            break;
+            )
+            break
         }
-      });
-    });
-    this.listLoading = false;
+      })
+    })
+    this.listLoading = false
   },
   beforeDestroy() {
-    this.unsubscribe();
+    this.unsubscribe()
   },
   methods: {
     defaultTo,
@@ -340,114 +336,114 @@ export default {
     isEmpty,
     dayjs,
     toggleLoading() {
-      this.fullScreenLoading = !this.fullScreenLoading;
+      this.fullScreenLoading = !this.fullScreenLoading
     },
     async fetchReferees(talentId) {
-      this.refereeLoading = true;
+      this.refereeLoading = true
       try {
         const referees = await getReferees({
           companyId: this.companyId,
-          talentId: talentId,
-        });
+          talentId: talentId
+        })
         this.referees = await Promise.all(
-          referees.map(async (referee) => {
+          referees.map(async(referee) => {
             const refereesRef = companiesStorageRef.child(
               `${this.companyId}/talents/${talentId}/referees/${referee.id}`
-            );
+            )
             const businessCardUrl = await refereesRef
               .getDownloadURL()
-              .catch(() => {});
-            return { ...referee, businessCardUrl };
+              .catch(() => {})
+            return { ...referee, businessCardUrl }
           })
-        );
+        )
       } finally {
-        this.refereeLoading = false;
+        this.refereeLoading = false
       }
     },
     onClickSendEmail(talentRowData) {
-      const { id: talentId } = talentRowData;
-      this.toggleLoading();
+      const { id: talentId } = talentRowData
+      this.toggleLoading()
       // https://github.com/team-5g/mikiwame/issues/276
       // sendgrid の送信完了を待つと、3秒以上ローディングで待たされてしまう。そのため、完了を待たずに成功通知を出してしまう。
-      functions.httpsCallable("sendMailToTalentByIds")({
+      functions.httpsCallable('sendMailToTalentByIds')({
         companyId: this.companyId,
-        talentId,
-      });
+        talentId
+      })
       // .catch(() => { this.$notify({ title: 'Error', message: 'メールの送信に失敗しました。通信環境を確認したうえで再度お試しください。', type: 'error' })
       this.$notify({
-        title: "Success",
-        message: "メールの送信に成功しました",
-        type: "success",
-      });
+        title: 'Success',
+        message: 'メールの送信に成功しました',
+        type: 'success'
+      })
       // 候補者のステータスを「未送信」から「未開封」へ変更
       updateTalent({
         companyId: this.companyId,
         talentId: this.selectedTalentData.id,
-        data: { status: statusProperty.mailSend.key },
-      });
-      this.toggleLoading();
+        data: { status: statusProperty.mailSend.key }
+      })
+      this.toggleLoading()
     },
     selectTalent(talentData) {
-      this.selectedTalentData = talentData;
-      this.fetchReferees(talentData.id);
+      this.selectedTalentData = talentData
+      this.fetchReferees(talentData.id)
     },
     getJobCategoryLabel([parentValue, childValue]) {
       if (parentValue !== undefined && childValue !== undefined) {
         const parentJobCategory = getJobCategoryOptionsByLang().find(
           (elem) => elem.value === parentValue
-        );
+        )
         const childJobCategory = parentJobCategory.children.find(
           (elem) => elem.value === childValue
-        );
-        return `${parentJobCategory.label} ${childJobCategory.label}`;
+        )
+        return `${parentJobCategory.label} ${childJobCategory.label}`
       }
     },
     changeSelectedButtonColor(id) {
       // TODO: 削除ボタン復活したらpadding-topを0にする(UNO)
       if (id === this.selectedTalentData.id) {
-        return { "background-color": "#e5e5ed", "padding-top": "10" };
+        return { 'background-color': '#e5e5ed', 'padding-top': '10' }
       }
-      return { "padding-top": "10" };
+      return { 'padding-top': '10' }
     },
     isOverdue(deadline) {
-      if (deadline == null) return false;
+      if (deadline == null) return false
 
-      return dayjs().isAfter(deadline.toDate());
+      return dayjs().isAfter(deadline.toDate())
     },
     // TlentDataGraphからfilteredTalents(絞り込み後の候補者群)を取得
     filteredTalentsListener(value) {
-      this.filteredTalents = value;
+      this.filteredTalents = value
     },
     async deleteTalent(talentData) {
-      this.$confirm(talentData.name + "さんを削除しますか？", "候補者の削除", {
-        confirmButtonText: "",
+      this.$confirm(talentData.name + 'さんを削除しますか？', '候補者の削除', {
+        confirmButtonText: ''
       }).then(() => {
-        this.toggleLoading();
+        this.toggleLoading()
         return updateTalent({
           companyId: this.companyId,
           talentId: talentData.id,
-          data: { deletedAt: new Date() },
+          data: { deletedAt: new Date() }
         })
           .then(() => {
             this.$message({
-              message: "削除に成功しました",
-              type: "success",
-            });
-            this.selectedTalentData = {};
+              message: '削除に成功しました',
+              type: 'success'
+            })
+            this.selectedTalentData = {}
           })
           .catch((err) => {
-            this.$rollbar.error(err);
+            this.$rollbar.error(err)
             this.$message({
               message:
-                "削除に失敗しました。通信環境を確認したうえで再度お試しください。",
-              type: "error",
-            });
+                '削除に失敗しました。通信環境を確認したうえで再度お試しください。',
+              type: 'error'
+            })
           })
-          .finally(this.toggleLoading);
-      });
-    },
-  },
-};
+          .finally(this.toggleLoading)
+      })
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

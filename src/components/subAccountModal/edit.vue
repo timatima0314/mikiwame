@@ -35,133 +35,133 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import { updateSubAccount } from "@/utils/hooks/firestore";
-import { companiesCollectionRef } from "@/plugins/firebase";
+import { mapGetters } from 'vuex'
+import { updateSubAccount } from '@/utils/hooks/firestore'
+import { companiesCollectionRef } from '@/plugins/firebase'
 
 const getDefaultFormValues = () => ({
-  name: "",
-  email: "",
-  department: "",
-});
+  name: '',
+  email: '',
+  department: ''
+})
 
 export default {
-  name: "EditSubAccountModal",
+  name: 'EditSubAccountModal',
   props: {
     isModalOpen: { type: Boolean, default: false },
     subAccountData: {
       type: Object,
       default: () => ({
-        name: "",
-        email: "",
-        id: "",
-        department: "",
-      }),
-    },
+        name: '',
+        email: '',
+        id: '',
+        department: ''
+      })
+    }
   },
   data() {
     return {
       loading: false,
-      form: getDefaultFormValues(),
-    };
+      form: getDefaultFormValues()
+    }
   },
   computed: {
-    ...mapGetters(["companyId"]),
+    ...mapGetters(['companyId']),
     rules: () => ({
       name: [
-        { required: true, message: "氏名を入力してください", trigger: "blur" },
+        { required: true, message: '氏名を入力してください', trigger: 'blur' }
       ],
       email: [
         {
           required: true,
-          message: "メールアドレスを入力してください",
-          trigger: "blur",
+          message: 'メールアドレスを入力してください',
+          trigger: 'blur'
         },
         {
-          type: "email",
-          message: "メールアドレスの形式が無効です",
-          trigger: "blur",
-        },
+          type: 'email',
+          message: 'メールアドレスの形式が無効です',
+          trigger: 'blur'
+        }
       ],
       department: [
         {
           required: true,
-          message: "部署名を入力してください",
-          trigger: "blur",
-        },
-      ],
-    }),
+          message: '部署名を入力してください',
+          trigger: 'blur'
+        }
+      ]
+    })
   },
   watch: {
     isModalOpen() {
-      this.assignDataToForm();
-    },
+      this.assignDataToForm()
+    }
   },
   methods: {
     assignDataToForm() {
-      this.form = this.subAccountData;
+      this.form = this.subAccountData
     },
     toggleLoading() {
-      this.loading = !this.loading;
+      this.loading = !this.loading
     },
     close() {
-      this.$emit("unset-editing");
+      this.$emit('unset-editing')
     },
     // ×ボタンかモーダルの外がクリックされた場合
     handleClose(done) {
-      this.$confirm("企業担当者の編集を中断しますか?")
+      this.$confirm('企業担当者の編集を中断しますか?')
         .then(() => {
-          done();
+          done()
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     async updateSubAccount() {
-      const valid = await this.$refs.form.validate().catch(() => {});
-      if (!valid) return;
+      const valid = await this.$refs.form.validate().catch(() => {})
+      if (!valid) return
 
-      this.toggleLoading();
+      this.toggleLoading()
       const snap = await companiesCollectionRef
         .doc(this.companyId)
-        .collection("subAccounts")
-        .where("email", "==", this.form.email)
-        .get();
+        .collection('subAccounts')
+        .where('email', '==', this.form.email)
+        .get()
       if (!snap.empty) {
         this.$notify({
-          type: "error",
-          title: "Error",
+          type: 'error',
+          title: 'Error',
           message:
-            "ご入力されたメールアドレスは既に使用されております。他のメールアドレスをご入力ください。",
-        });
-        this.toggleLoading();
-        return;
+            'ご入力されたメールアドレスは既に使用されております。他のメールアドレスをご入力ください。'
+        })
+        this.toggleLoading()
+        return
       }
       updateSubAccount({
         companyId: this.companyId,
         subAccountId: this.subAccountData.id,
-        data: this.form,
+        data: this.form
       })
         .then(() => {
           this.$notify({
-            title: "Success",
-            message: "企業担当者の情報を編集しました。",
-            type: "success",
-          });
-          this.form = getDefaultFormValues();
+            title: 'Success',
+            message: '企業担当者の情報を編集しました。',
+            type: 'success'
+          })
+          this.form = getDefaultFormValues()
         })
         .catch((err) => {
-          this.$rollbar.error(err);
+          this.$rollbar.error(err)
           this.$notify({
-            type: "error",
-            title: "Error",
+            type: 'error',
+            title: 'Error',
             message:
-              "ネットワークエラーが発生しました。通信環境を確認したうえで再度お試しください。",
-          });
+              'ネットワークエラーが発生しました。通信環境を確認したうえで再度お試しください。'
+          })
         })
         .finally(() => {
-          this.toggleLoading();
-          this.close();
-        });
-    },
-  },
-};
+          this.toggleLoading()
+          this.close()
+        })
+    }
+  }
+}
 </script>

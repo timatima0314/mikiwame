@@ -35,130 +35,130 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import { functions, companiesCollectionRef } from "@/plugins/firebase";
+import { mapGetters } from 'vuex'
+import { functions, companiesCollectionRef } from '@/plugins/firebase'
 
 const getDefaultFormValues = () => ({
-  name: "",
-  email: "",
-  department: "",
-});
+  name: '',
+  email: '',
+  department: ''
+})
 
 export default {
-  name: "AddSubAccountModal",
+  name: 'AddSubAccountModal',
   props: {
-    isModalOpen: { type: Boolean, default: false },
+    isModalOpen: { type: Boolean, default: false }
   },
   data() {
     return {
       loading: false,
-      form: getDefaultFormValues(),
-    };
+      form: getDefaultFormValues()
+    }
   },
   computed: {
-    ...mapGetters(["companyId"]),
+    ...mapGetters(['companyId']),
     rules: () => ({
       name: [
-        { required: true, message: "氏名を入力してください", trigger: "blur" },
+        { required: true, message: '氏名を入力してください', trigger: 'blur' }
       ],
       email: [
         {
           required: true,
-          message: "メールアドレスを入力してください",
-          trigger: "blur",
+          message: 'メールアドレスを入力してください',
+          trigger: 'blur'
         },
         {
-          type: "email",
-          message: "メールアドレスの形式が無効です",
-          trigger: "blur",
-        },
+          type: 'email',
+          message: 'メールアドレスの形式が無効です',
+          trigger: 'blur'
+        }
       ],
       department: [
         {
           required: true,
-          message: "部署名を入力してください",
-          trigger: "blur",
-        },
-      ],
-    }),
+          message: '部署名を入力してください',
+          trigger: 'blur'
+        }
+      ]
+    })
   },
   methods: {
     toggleLoading() {
-      this.loading = !this.loading;
+      this.loading = !this.loading
     },
     close() {
-      this.$emit("update:isModalOpen", false);
+      this.$emit('update:isModalOpen', false)
     },
     // ×ボタンかモーダルの外がクリックされた場合
     handleClose(done) {
-      this.$confirm("企業担当者の追加を中断しますか?")
+      this.$confirm('企業担当者の追加を中断しますか?')
         .then(() => {
-          done();
+          done()
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     async addSubAccount() {
-      const valid = await this.$refs.form.validate().catch(() => {});
-      if (!valid) return;
+      const valid = await this.$refs.form.validate().catch(() => {})
+      if (!valid) return
 
-      this.toggleLoading();
+      this.toggleLoading()
       const subAccountRef = await companiesCollectionRef
         .doc(this.companyId)
-        .collection("subAccounts");
+        .collection('subAccounts')
       const snap = await subAccountRef
-        .where("email", "==", this.form.email)
-        .get();
+        .where('email', '==', this.form.email)
+        .get()
       if (!snap.empty) {
         this.$notify({
-          type: "error",
-          title: "Error",
+          type: 'error',
+          title: 'Error',
           message:
-            "ご入力されたメールアドレスは既に使用されております。他のメールアドレスをご入力ください。",
-        });
-        this.toggleLoading();
-        return;
+            'ご入力されたメールアドレスは既に使用されております。他のメールアドレスをご入力ください。'
+        })
+        this.toggleLoading()
+        return
       }
       const newSubAccountData = await subAccountRef
         .add({ ...this.form, createdAt: new Date() })
         .catch((err) => {
-          this.$rollbar.error(err);
+          this.$rollbar.error(err)
           this.$notify({
-            type: "error",
-            title: "Error",
+            type: 'error',
+            title: 'Error',
             message:
-              "ネットワークエラーが発生しました。通信環境を確認したうえで再度お試しください。",
-          });
-          this.toggleLoading();
-          this.close();
-          throw Error(err);
-        });
+              'ネットワークエラーが発生しました。通信環境を確認したうえで再度お試しください。'
+          })
+          this.toggleLoading()
+          this.close()
+          throw Error(err)
+        })
       functions
-        .httpsCallable("notifySubAccountToSetPassword")({
+        .httpsCallable('notifySubAccountToSetPassword')({
           companyId: this.companyId,
-          subAccountId: newSubAccountData.id,
+          subAccountId: newSubAccountData.id
         })
         .then(() => {
           this.$notify({
-            title: "Success",
+            title: 'Success',
             message:
-              "企業担当者の追加に成功しました。パスワード設定メールを指定のメールアドレスに送信しました。",
-            type: "success",
-          });
-          this.form = getDefaultFormValues();
+              '企業担当者の追加に成功しました。パスワード設定メールを指定のメールアドレスに送信しました。',
+            type: 'success'
+          })
+          this.form = getDefaultFormValues()
         })
         .catch(() => {
           this.$notify({
-            type: "error",
-            title: "Error",
+            type: 'error',
+            title: 'Error',
             message:
-              "ネットワークエラーが発生しました。通信環境を確認したうえで再度お試しください。",
-          });
+              'ネットワークエラーが発生しました。通信環境を確認したうえで再度お試しください。'
+          })
         })
         .finally(() => {
-          this.toggleLoading();
-          this.close();
-        });
-    },
-  },
-};
+          this.toggleLoading()
+          this.close()
+        })
+    }
+  }
+}
 </script>

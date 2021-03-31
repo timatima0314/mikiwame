@@ -10,8 +10,8 @@
         label-position="left"
       >
         <div style="text-align: center">
-          <img src="@/assets/logo.png" style="width: 100%" />
-          <br />
+          <img src="@/assets/logo.png" style="width: 100%">
+          <br>
         </div>
 
         <el-form-item prop="email">
@@ -53,8 +53,7 @@
             type="primary"
             class="login-button"
             @click.native.prevent="handleSignup"
-            >新規登録</el-button
-          >
+          >新規登録</el-button>
         </div>
       </el-form>
     </div>
@@ -62,56 +61,56 @@
 </template>
 
 <script>
-import firebase from "firebase/app";
-import { emailRules, passwordRules } from "@/constants/validation";
-import { functions } from "@/plugins/firebase";
+import firebase from 'firebase/app'
+import { emailRules, passwordRules } from '@/constants/validation'
+import { functions } from '@/plugins/firebase'
 
 export default {
-  name: "SubAccountSignUp",
+  name: 'SubAccountSignUp',
   data() {
     return {
       signupForm: {
-        email: "",
-        password: "",
-        confirmationPassword: "",
+        email: '',
+        password: '',
+        confirmationPassword: ''
       },
-      loading: false,
-    };
+      loading: false
+    }
   },
   computed: {
     loginRules() {
       return {
         email: emailRules,
-        password: passwordRules,
-      };
-    },
+        password: passwordRules
+      }
+    }
   },
   watch: {
     $route: {
-      handler: function (route) {
-        this.redirect = route.query && route.query.redirect;
+      handler: function(route) {
+        this.redirect = route.query && route.query.redirect
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     async handleSignup() {
       if (this.signupForm.password !== this.signupForm.confirmationPassword) {
         return this.$alert(
-          "入力内容をお確かめください",
-          "パスワードが一致しません",
+          '入力内容をお確かめください',
+          'パスワードが一致しません',
           {
-            confirmButtonText: "Close",
-            type: "warning",
+            confirmButtonText: 'Close',
+            type: 'warning'
           }
-        );
+        )
       }
 
-      const valid = await this.$refs.signupForm.validate().catch(() => {});
-      if (valid === undefined) return;
-      this.loading = true;
+      const valid = await this.$refs.signupForm.validate().catch(() => {})
+      if (valid === undefined) return
+      this.loading = true
       // ユーザー登録とsubAccountsコレクションの追加を行う
-      const { company: companyId, token: subAccountId } = this.$route.query;
+      const { company: companyId, token: subAccountId } = this.$route.query
       firebase
         .auth()
         .createUserWithEmailAndPassword(
@@ -122,53 +121,53 @@ export default {
           // サブアカウントを登録する
           const updateData = {
             uid: user.uid,
-            email: this.signupForm.email,
-          };
+            email: this.signupForm.email
+          }
           Promise.all([
-            functions.httpsCallable("pushToSubAccountUids")({
+            functions.httpsCallable('pushToSubAccountUids')({
               companyId,
-              uid: user.uid,
+              uid: user.uid
             }),
-            functions.httpsCallable("updateSubAccountByIds")({
+            functions.httpsCallable('updateSubAccountByIds')({
               companyId,
               subAccountId,
-              data: updateData,
-            }),
-          ])
-            .then(async () => {
-              await functions.httpsCallable("notifyAdminToSubAccountSignup")({
-                companyId,
-                subAccountId,
-              });
-              this.$router.push({ name: "signupSubAccountPhone" });
+              data: updateData
             })
-            .catch(async (err) => {
-              this.$rollbar.error(err);
-              this.loading = false;
+          ])
+            .then(async() => {
+              await functions.httpsCallable('notifyAdminToSubAccountSignup')({
+                companyId,
+                subAccountId
+              })
+              this.$router.push({ name: 'signupSubAccountPhone' })
+            })
+            .catch(async(err) => {
+              this.$rollbar.error(err)
+              this.loading = false
               // サブアカウントの登録に失敗したら、新規登録をやり直せるようにユーザーを削除しておく
               this.$message({
                 message:
-                  "登録に失敗しました。通信環境を確認したうえで再度お試しください。",
-                type: "error",
-              });
-              await functions.httpsCallable("deleteFromSubAccountUids")({
+                  '登録に失敗しました。通信環境を確認したうえで再度お試しください。',
+                type: 'error'
+              })
+              await functions.httpsCallable('deleteFromSubAccountUids')({
                 companyId,
-                uid: user.uid,
-              });
-              user.delete();
-            });
+                uid: user.uid
+              })
+              user.delete()
+            })
         })
         .catch((err) => {
-          this.$rollbar.error(err);
-          this.loading = false;
-          if (err.code === "auth/email-already-in-use") {
+          this.$rollbar.error(err)
+          this.loading = false
+          if (err.code === 'auth/email-already-in-use') {
             this.$message({
-              message: "すでに登録済みのメールアドレスです",
-              type: "error",
-            });
+              message: 'すでに登録済みのメールアドレスです',
+              type: 'error'
+            })
           }
-        });
-    },
-  },
-};
+        })
+    }
+  }
+}
 </script>
