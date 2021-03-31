@@ -17,7 +17,7 @@ module.exports = functions
     const globalizeNumber = tel => `+81${tel.slice(1)}`
     try {
       const user = await admin.auth().getUserByPhoneNumber(globalizeNumber(data.phoneNumber))
-      return { registered: Boolean(user.email) }
+      return { registered: Boolean(user && user.email) }
     } catch (err) {
       if (err.code === 'auth/user-not-found') return { registered: false }
 
