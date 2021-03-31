@@ -2,21 +2,20 @@ name: Pull Request Frontend
 
 on:
   push:
-    pull_request:
     paths-ignore:
-    - 'functions/**'
-    - '.github/**'
-    - 'README.md'
-    - 'docs/**'
+      - "functions/**"
+      - ".github/**"
+      - "README.md"
+      - "docs/**"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - run: npm ci
-    - run: npm run lint:ci
-    - run: npm run test:unit
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: npm ci
+      - run: npm run lint:ci
+      - run: npm run test:unit
