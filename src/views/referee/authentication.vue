@@ -141,9 +141,8 @@ export default {
         name: 'refereeChoiceRoute',
         query: this.$route.query
       })
-    }
-    // 既に電話番号の登録が行われているが回答は完了していない場合
-    else if (this.referee.phoneNumber) {
+    } else if (this.referee.phoneNumber) {
+      // 既に電話番号の登録が行われているが回答は完了していない場合
       this.status = STATUSES.INPUT_VERIFY_CODE
       this.isBeforeRegisteringPhone = false
       this.form.tel = this.referee.phoneNumber
