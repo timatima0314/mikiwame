@@ -204,3 +204,22 @@ input[type="number"] {
     color: $mainButton;
   }
 }
+
+.vue-tel-input {
+  border-radius: 10px;
+  font-size: 14px;
+  color: #a09e9e;
+  border: 1px solid #DCDFE6;
+  line-height: initial;
+}
+.vti__input::placeholder {
+  color: #a09e9e
+}
+.vti__dropdown {
+  border-radius: 10px 0 0 10px;
+}
+.vue-tel-input:focus-within {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  border-color: #409EFF;
+}

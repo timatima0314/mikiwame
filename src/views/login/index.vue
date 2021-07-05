@@ -130,7 +130,7 @@
 import firebase from 'firebase/app'
 import { mapGetters } from 'vuex'
 import { hasAdminAuth } from '@/utils/auth'
-import { normalizePhoneNumber, anonymizePhoneNumber } from '@/utils/phone'
+import { anonymizePhoneNumber } from '@/utils/phone'
 import { emailRules, passwordRules } from '@/constants/validation'
 import ResetPasswordModal from '@/components/ResetPasswordModal'
 import { useCompany, updateCompany } from '@/utils/hooks/firestore'
@@ -169,7 +169,7 @@ export default {
       return this.$route.name === 'adminLogin'
     },
     convertedPhoneNumber() {
-      return anonymizePhoneNumber(normalizePhoneNumber(this.phoneNumber))
+      return anonymizePhoneNumber(this.phoneNumber)
     }
   },
   watch: {
