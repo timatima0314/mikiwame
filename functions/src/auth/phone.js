@@ -9,9 +9,8 @@ module.exports = functions
     if (data.awakeRun) return null
     if (context.auth === null) throw NoAuthError()
 
-    const globalizeNumber = tel => `+81${tel.slice(1)}`
     try {
-      const user = await admin.auth().getUserByPhoneNumber(globalizeNumber(data.phoneNumber))
+      const user = await admin.auth().getUserByPhoneNumber(data.phoneNumber)
       return { registered: Boolean(user) }
     } catch (err) {
       if (err.code === 'auth/user-not-found') return { registered: false }

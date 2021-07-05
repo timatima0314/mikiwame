@@ -20,15 +20,27 @@
           </div>
         </div>
 
-        <el-form-item prop="tel">
-          <el-input
-            v-model="form.tel"
-            placeholder="電話番号(ハイフンなし)"
-            name="tel"
-            type="text"
-            tabindex="1"
-            auto-complete="on"
-          />
+        <el-form-item prop="nationalNumber">
+          <vue-tel-input
+            :input-options="{
+              placeholder: '電話番号を入力してください',
+              name: 'tel',
+              type: 'text',
+              tabindex: '1',
+            }"
+            :valid-characters-only="true"
+            @input="onInput"
+          >
+            <!-- arrow-iconを指定しないとundefinedが表示されてしまう -->
+            <template
+              slot="arrow-icon"
+              slot-scope="{ open }"
+            >
+              <span class="vti__dropdown-arrow">
+                {{ open ? "▲" : "▼" }}
+              </span>
+            </template>
+          </vue-tel-input>
         </el-form-item>
 
         <el-button
@@ -74,11 +86,7 @@
 
 <script>
 import firebase from 'firebase/app'
-import {
-  formatPhoneNumber,
-  normalizePhoneNumber,
-  anonymizePhoneNumber
-} from '@/utils/phone'
+import { anonymizePhoneNumber } from '@/utils/phone'
 import { functions } from '@/plugins/firebase'
 import { telRules } from '@/constants/validation'
 
@@ -108,7 +116,7 @@ export default {
     SIGNUP_STATUSES: () => SIGNUP_STATUSES,
     rules: () => ({ tel: telRules }),
     convertedPhoneNumber() {
-      return anonymizePhoneNumber(normalizePhoneNumber(this.form.tel))
+      return anonymizePhoneNumber(this.form.tel)
     }
   },
   watch: {
@@ -134,6 +142,9 @@ export default {
   methods: {
     onClickBack() {
       this.signupStatus = SIGNUP_STATUSES.INPUT_PHONE_NUMBER
+    },
+    onInput(_, phoneObj) {
+      this.form.tel = phoneObj.number
     },
     async sendVerificationCode() {
       const valid = await this.$refs.form.validate().catch(() => {})
@@ -168,7 +179,7 @@ export default {
       firebase
         .auth()
         .signInWithPhoneNumber(
-          formatPhoneNumber(this.form.tel),
+          this.form.tel,
           window.recaptchaVerifier
         )
         .then((confirmationResult) => {

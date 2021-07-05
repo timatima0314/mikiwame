@@ -7,6 +7,9 @@ import 'element-ui/lib/theme-chalk/index.css'
 // import locale from 'element-ui/lib/locale/lang/en' // lang i18n
 import locale from 'element-ui/lib/locale/lang/ja'
 
+import VueTelInput from 'vue-tel-input'
+import 'vue-tel-input/dist/vue-tel-input.css'
+
 import '@/styles/index.scss' // global css
 
 import App from './App'
@@ -75,3 +78,4 @@ const breakpoints = {
 
 Vue.use(VueMq, { breakpoints })
 Vue.use(VueClipboard)
+Vue.use(VueTelInput)

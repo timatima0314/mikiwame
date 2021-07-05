@@ -25,11 +25,14 @@ exports.get = functions
     const talentData = talentSnapshot.data()
     const refereeSnapshot = await talentSnapshot.ref.collection('referees').doc(refereeId).get()
     const refereesSnapshot = await talentSnapshot.ref.collection('referees').orderBy('createdAt', 'asc').get()
-
+    const getGlobalPhoneNumber = (talent) => {
+      if(!talent.phoneNumber || talent.phoneNumber.startsWith('+')) return talent.phoneNumber
+      return `${talent.countryCode}${talent.phoneNumber.slice(1)}`
+    } 
     return {
       talentName: talentData.name,
       // 推薦者の認証の際に、候補者の電話番号を弾くために使用
-      talentPhoneNumber: talentData.phoneNumber,
+      talentPhoneNumber: getGlobalPhoneNumber(talentData),
       // 推薦者の認証の際に、他の推薦者と同様の電話番号を弾くために使用
       refereesPhoneNumber: refereesSnapshot.docs.map(doc => Converter.encodeDateFields({ ...doc.data(), id: doc.id }).phoneNumber),
       deadline: talentData.deadline.toDate().toJSON(),

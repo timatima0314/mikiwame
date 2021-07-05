@@ -11,5 +11,6 @@ export const passwordRules = [
 ].map(mergeTriggerOnBlur)
 
 export const telRules = [
-  { required: true, pattern: /^0\d{10}$/, message: '電話番号の形式が無効です。ハイフンなしの11桁で入力してください' }
+  { required: true, message: '電話番号を入力してください' },
+  { pattern: /^\+\d{7}$/, message: '電話番号の形式が無効です' }
 ].map(mergeTriggerOnBlur)
