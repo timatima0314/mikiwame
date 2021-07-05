@@ -18,19 +18,32 @@
           </h3>
           <div class="text">
             <p>{{ refereeI18n.t("message.toIncreaseSecurity") }}</p>
+            <p>{{ refereeI18n.t("message.connectYourPhoneNumberToYourAccount", {account: email}) }}</p>
             <p>{{ refereeI18n.t("message.pleaseRegisteringPhoneNumber") }}</p>
           </div>
         </div>
 
-        <el-form-item prop="tel">
-          <el-input
-            v-model="form.tel"
-            :placeholder="commonI18n.t('message.phoneNumber')"
-            name="tel"
-            type="text"
-            tabindex="1"
-            auto-complete="on"
-          />
+        <el-form-item prop="nationalNumber">
+          <vue-tel-input
+            :input-options="{
+              placeholder: refereeI18n.t('message.placeholderPhoneNumber'),
+              name: 'tel',
+              type: 'text',
+              tabindex: '1',
+            }"
+            :valid-characters-only="true"
+            @input="onInput"
+          >
+            <!-- arrow-iconを指定しないとundefinedが表示されてしまう -->
+            <template
+              slot="arrow-icon"
+              slot-scope="{ open }"
+            >
+              <span class="vti__dropdown-arrow">
+                {{ open ? "▲" : "▼" }}
+              </span>
+            </template>
+          </vue-tel-input>
         </el-form-item>
 
         <el-button
@@ -84,15 +97,11 @@
 
 <script>
 import firebase from 'firebase/app'
-import {
-  formatPhoneNumber,
-  normalizePhoneNumber,
-  anonymizePhoneNumber
-} from '@/utils/phone'
+import { anonymizePhoneNumber } from '@/utils/phone'
 import { functions } from '@/plugins/firebase'
-import { telRules } from '@/constants/validation'
 import { RefereeApi } from '@/utils/api/referee_api'
 import { refereePageMixin } from './mixin/refereePageMixin'
+import { telRules } from '@/constants/validation'
 
 const STATUSES = {
   INPUT_PHONE_NUMBER: 'INPUT_PHONE_NUMBER',
@@ -121,7 +130,7 @@ export default {
     STATUSES: () => STATUSES,
     rules: () => ({ tel: telRules }),
     convertedPhoneNumber() {
-      return anonymizePhoneNumber(normalizePhoneNumber(this.form.tel))
+      return anonymizePhoneNumber(this.form.tel)
     }
   },
   watch: {
@@ -159,6 +168,9 @@ export default {
   methods: {
     onClickBack() {
       this.status = STATUSES.INPUT_PHONE_NUMBER
+    },
+    onInput(_, phoneObj) {
+      this.form.tel = phoneObj.number
     },
     async phoneNumberRegistration() {
       const valid = await this.$refs.form.validate().catch(() => {})
@@ -199,7 +211,7 @@ export default {
       firebase
         .auth()
         .signInWithPhoneNumber(
-          formatPhoneNumber(this.form.tel),
+          this.form.tel,
           window.recaptchaVerifier
         )
         .then((confirmationResult) => {
