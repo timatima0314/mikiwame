@@ -18,6 +18,7 @@
           </h3>
           <div class="text">
             <p>{{ refereeI18n.t("message.toIncreaseSecurity") }}</p>
+            <p>{{ refereeI18n.t("message.connectYourPhoneNumberToYourAccount", {account: email}) }}</p>
             <p>{{ refereeI18n.t("message.pleaseRegisteringPhoneNumber") }}</p>
           </div>
         </div>
@@ -25,7 +26,7 @@
         <el-form-item prop="nationalNumber">
           <vue-tel-input
             :input-options="{
-              placeholder: '電話番号を入力してください',
+              placeholder: refereeI18n.t('message.placeholderPhoneNumber'),
               name: 'tel',
               type: 'text',
               tabindex: '1',
