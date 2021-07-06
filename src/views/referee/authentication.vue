@@ -18,7 +18,6 @@
           </h3>
           <div class="text">
             <p>{{ refereeI18n.t("message.toIncreaseSecurity") }}</p>
-            <p>{{ refereeI18n.t("message.connectYourPhoneNumberToYourAccount", {account: email}) }}</p>
             <p>{{ refereeI18n.t("message.pleaseRegisteringPhoneNumber") }}</p>
           </div>
         </div>
