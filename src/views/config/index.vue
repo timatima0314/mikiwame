@@ -1,8 +1,8 @@
 <template>
   <el-form ref="form" :model="form" class="container" label-width="220px" :rules="rules">
     <h1>設定</h1>
-    <el-form-item v-if="!isAdmin" label="会社名">
-      <el-input v-model="form.companyName" placeholder="株式会社HRRT" prefix-icon="el-icon-office-building" :disabled="isSubAccount" />
+    <el-form-item v-if="!isAdmin&&!isSubAccount" label="会社名">
+      <el-input v-model="form.companyName" placeholder="株式会社HRRT" prefix-icon="el-icon-office-building" />
       <span style="color: tomato">※候補者へのメールで表示されます</span>
     </el-form-item>
     <el-form-item v-if="isAdmin" label="ショップID">
@@ -15,11 +15,11 @@
     <el-form-item label="メールアドレス">
       <el-input v-model="form.email" placeholder="ご自身のメールアドレス" prefix-icon="el-icon-message" />
     </el-form-item>
-    <el-form-item label="郵便番号(ハイフンなし)">
-      <el-input v-model="form.zipcode" placeholder="例: 1070062" prefix-icon="el-icon-receiving" type="number" :disabled="isSubAccount" />
+    <el-form-item v-if="!isSubAccount" label="郵便番号(ハイフンなし)">
+      <el-input v-model="form.zipcode" placeholder="例: 1070062" prefix-icon="el-icon-receiving" type="number" />
     </el-form-item>
-    <el-form-item label="ご住所">
-      <el-input v-model="form.address" placeholder="例: 東京都港区南青山3丁目8番40号 青山センタービル2F" prefix-icon="el-icon-house" :disabled="isSubAccount" />
+    <el-form-item v-if="!isSubAccount" label="ご住所">
+      <el-input v-model="form.address" placeholder="例: 東京都港区南青山3丁目8番40号 青山センタービル2F" prefix-icon="el-icon-house" />
     </el-form-item>
     <!-- SMS送信処理などが必要なためPENDING -->
     <!-- <el-form-item label="電話番号(ハイフンなし)">
@@ -35,11 +35,11 @@
     <el-form-item v-if="isAdmin" label="運用通知">
       <el-input v-model="form.adminMail" placeholder="通知を受信するメールアドレス" prefix-icon="el-icon-message" />
     </el-form-item>
-    <el-form-item v-if="!isAdmin" label="クレジットカード">
+    <el-form-item v-if="!isAdmin&&!isSubAccount" label="クレジットカード">
       <div>{{ maskedCardNo || 'カードが登録されていません' }}</div>
     </el-form-item>
 
-    <div class="config-switch">
+    <div v-if="!isSubAccount" class="config-switch">
       <el-row :gutter="20">
         <el-col :span="16" :offset="2">
           推薦者の本⼈確認資料である名刺２枚が写った画像の取得設定について<br>
@@ -57,9 +57,9 @@
       </el-row>
     </div>
 
-    <div v-if="!isAdmin" class="not-form-button" style="margin-top: 40px;">
-      <el-button :disabled="isSubAccount" @click="$router.push({ name: 'configCard' })">クレジットカード設定</el-button>
-      <el-button type="info" plain :disabled="isSubAccount" @click="goToWithdrawal"><span style="padding: 0 16px">退会</span></el-button>
+    <div v-if="!isAdmin&&!isSubAccount" class="not-form-button" style="margin-top: 40px;">
+      <el-button @click="$router.push({ name: 'configCard' })">クレジットカード設定</el-button>
+      <el-button type="info" plain @click="goToWithdrawal"><span style="padding: 0 16px">退会</span></el-button>
     </div>
 
     <div class="not-form-button">
@@ -67,7 +67,7 @@
       <el-button :loading="loading" @click="onReset">リセット</el-button>
     </div>
 
-    <div style="margin-top: 30px">
+    <div v-if="!isSubAccount" style="margin-top: 30px">
       <span class="caution-title">注意事項</span>
       <p>
         ※1 本人確認名刺2枚について
