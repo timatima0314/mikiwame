@@ -79,6 +79,8 @@
         </el-row>
       </el-card>
 
+      <ReportRefereeList :referees="referees" />
+
       <el-card shadow="never" class="card-entire">
         <span class="card-title">
           <i class="el-icon-search" />
@@ -239,7 +241,7 @@
                           findExcuse(description.key, answer.id, true)
                       "
                     >
-                      <hr class="regain-trust-divider">
+                      <hr>
                       <p class="regain-trust-excuse">
                         候補者からの回答：{{
                           findExcuse(description.key, answer.id, true)
@@ -416,6 +418,7 @@ import logo from '@/assets/logo.png'
 import { defaultDeadline } from '@/constants/date'
 import { functions } from '@/plugins/firebase'
 import RegainTrustDeadline from '@/components/RegainTrustDeadline'
+import ReportRefereeList from '@/components/ReportRefereeList'
 import {
   selectionPatterns,
   radioSelectionText,
@@ -424,7 +427,7 @@ import {
 
 export default {
   name: 'TalentReport',
-  components: { RegainTrustDeadline },
+  components: { RegainTrustDeadline, ReportRefereeList },
   data: () => ({
     selectionPatterns,
     radioSelectionText,
@@ -482,6 +485,7 @@ export default {
         ]
       }
     ],
+    referees: [],
     // 記述式の回答がある場合は最終的に以下のような構造になります
     // descriptionsAndAnswers: [
     //   {
@@ -528,6 +532,7 @@ export default {
         companyId: this.companyId,
         talentId: this.$route.params.talentId
       })
+      this.referees = referees
       this.refereeCount = referees.length
       this.talent = talentData
       // TODO:要多言語対応
