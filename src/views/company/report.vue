@@ -79,7 +79,14 @@
         </el-row>
       </el-card>
 
-      <ReportRefereeList :referees="referees" />
+      <el-card shadow="never" class="card-entire referee">
+        <span class="card-title">
+          <i class="el-icon-user" />
+          推薦者
+        </span>
+
+        <ReportRefereeList :referees="referees" />
+      </el-card>
 
       <el-card shadow="never" class="card-entire">
         <span class="card-title">
