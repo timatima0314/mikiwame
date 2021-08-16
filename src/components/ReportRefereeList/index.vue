@@ -1,5 +1,5 @@
 <template>
-  <section class="referee">
+  <section v-if="referees.length > 0" class="referee">
     <div class="header">
       <div class="column name-status" />
       <div class="column relationship">
@@ -41,6 +41,9 @@
         {{ referee.belongs }}
       </div>
     </div>
+  </section>
+  <section v-else class="empty">
+    推薦者が登録されていません
   </section>
 </template>
 
@@ -162,4 +165,7 @@ export default {
 .column
   &+&
     margin-left: 16px
+.empty
+  margin: 16px
+  color: #606266
 </style>
