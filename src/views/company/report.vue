@@ -257,7 +257,7 @@
                           findExcuse(description.key, answer.id, true)
                       "
                     >
-                      <hr>
+                      <hr class="regain-trust-divider">
                       <p class="regain-trust-excuse">
                         候補者からの回答：{{
                           findExcuse(description.key, answer.id, true)
