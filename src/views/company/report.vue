@@ -84,7 +84,6 @@
           <i class="el-icon-user" />
           推薦者
         </span>
-
         <ReportRefereeList :referees="referees" />
       </el-card>
 
@@ -238,7 +237,17 @@
                     />
                     <span
                       class="questionsAndAnswers-name"
-                    ><i class="el-icon-user-solid" />{{ answer.name }}</span>
+                    >
+                      <i class="el-icon-user-solid" />
+                      {{ answer.name }}
+                      <span class="questionsAndAnswers-name__referee-relationships">
+                        【{{
+                          getTimeWorkingTogetherLabel(getReferee(answer.name))
+                        }}】{{
+                          getRelationshipLabel(getReferee(answer.name))
+                        }}
+                      </span>
+                    </span>
                     <div class="questionsAndAnswers-text">
                       {{ answer.answerText || "未回答" }}
                     </div>
@@ -282,27 +291,28 @@
               class="questionsAndAnswers-row"
             >
               <div class="questionsAndAnswers-label">
-                <span
-                  class="item-title questionsAndAnswers-num"
-                >{{ i + 1 }}.</span>
-                {{ selection.text }}
+                <span class="item-title questionsAndAnswers-num">{{ i + 1 }}.</span> {{ selection.text }}
               </div>
               <div v-for="(answer, j) in selection.answers" :key="j">
-                <span
-                  class="questionsAndAnswers-name"
-                ><i class="el-icon-user-solid" />{{ answer.name }}<br></span>
+                <span class="questionsAndAnswers-name">
+                  <i class="el-icon-user-solid" />
+                  {{ answer.name }}
+                  <span class="questionsAndAnswers-name__referee-relationships">
+                    【{{
+                      getTimeWorkingTogetherLabel(getReferee(answer.name))
+                    }}】{{
+                      getRelationshipLabel(getReferee(answer.name))
+                    }}
+                  </span>
+                  <br>
+                </span>
+
                 <ul
                   v-for="(text, k) in radioSelectionText['jp']"
                   :key="k"
                   style="display: inline-block"
                 >
-                  <li
-                    :class="
-                      isChoiceSelected(answer, selection, k)
-                        ? 'selected'
-                        : 'no-selected'
-                    "
-                  >
+                  <li :class="isChoiceSelected(answer, selection, k) ? 'selected' : 'no-selected'">
                     {{ text }}
                   </li>
                 </ul>
@@ -431,6 +441,9 @@ import {
   radioSelectionText,
   radioSelectionScore
 } from '@/constants/questions'
+import { getRelationshipOptionsByLang, getTimeWorkingOptionsByLang } from '../../constants/options'
+
+const getLabel = (options, target) => get(options.find(elem => elem.value === target), 'label')
 
 export default {
   name: 'TalentReport',
@@ -522,7 +535,11 @@ export default {
         noAnswer: '推薦者回答未完了'
       }
       return textEnum[this.status]
-    }
+    },
+    options: () => ({
+      relationshipOptions: getRelationshipOptionsByLang(),
+      timeWorkingOptions: getTimeWorkingOptionsByLang()
+    })
   },
   async created() {
     await this.fetchTalent()
@@ -818,6 +835,21 @@ export default {
       if (isRequiredExcuse && answers) return answers.excuse
       else if (!isRequiredExcuse && answers) return true
       else ''
+    },
+    getReferee(name) {
+      return this.referees.find(elem => elem.name === name)
+    },
+    getRelationshipLabel(referee) {
+      if (referee.relationship === 'other') {
+        return referee.otherRelationship
+      }
+      return getLabel(this.options.relationshipOptions, referee.relationship)
+    },
+    getTimeWorkingTogetherLabel(referee) {
+      if (referee.relationship === 'other') {
+        return referee.otherTimeWorkingTogether
+      }
+      return getLabel(this.options.timeWorkingOptions, referee.timeWorkingTogether)
     }
   }
 }
@@ -910,6 +942,8 @@ export default {
     font-size: .8rem
   &-name
     font-size: .9rem
+    &__referee-relationships
+      color: #909399
 .previous-page
   margin-top: 2rem
   text-align: center
@@ -950,4 +984,5 @@ export default {
 .no-selected
   font-size: 15px
   color: #C0C0C0
+
 </style>

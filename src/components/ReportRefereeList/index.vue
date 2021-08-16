@@ -1,47 +1,48 @@
 <template>
   <section class="referee">
-    <el-row v-for="(referee, i) in referees" :key="i" :gutter="20" class="referee-row">
-      <el-col :span="3">
-        <h4 class="name">{{ referee.name }}</h4>
-        <el-tag v-if="referee.completedAt" type="success" effect="dark" style="font-weight: bold">完了</el-tag>
-        <el-tag v-else-if="referee.answer" effect="dark" style="font-weight: bold">途中</el-tag>
-        <el-tag v-else type="info">未回答</el-tag>
+    <el-row class="content header">
+      <el-col :span="4" />
+      <el-col :span="20" style="display: flex;align-items: center">
+        <div class="referee-column" style="width: 130px">
+          [時期]関係性
+        </div>
+        <div class="referee-column" style="width: 200px">
+          一緒に仕事をした<span class="non-break">期間</span>
+        </div>
+        <div class="referee-column" style="width: 240px">
+          一緒に仕事をしたときの<span class="non-break">推薦者の会社名</span>
+        </div>
+        <div class="referee-column" style="width: 240px">
+          一緒に仕事をしたときの<span class="non-break">推薦者の職種</span>
+        </div>
+        <div class="referee-column" style="width: 200px">
+          所属
+        </div>
       </el-col>
-      <el-col :span="21">
-        <el-row class="content header">
-          <div class="referee-column" style="width: 150px">
-            【時期】関係性
-          </div>
-          <div class="referee-column" style="width: 195px">
-            一緒に仕事をした期間
-          </div>
-          <div class="referee-column" style="width: 240px">
-            一緒に仕事をしたときの推薦者の会社名
-          </div>
-          <div class="referee-column" style="width: 240px">
-            一緒に仕事をしたときの推薦者の職種
-          </div>
-          <div class="referee-column" style="width: 200px">
-            所属
-          </div>
-        </el-row>
-        <el-row class="content">
-          <div class="referee-column" style="width: 150px">
-            <p>【{{ getTimeWorkingTogetherLabel(referee) }}】{{ getRelationshipLabel(referee) }}</p>
-          </div>
-          <div class="referee-column" style="width: 195px">
-            <p>{{ getDuration(referee) }}</p>
-          </div>
-          <div class="referee-column" style=" width: 240px">
-            <p>{{ referee.company }}</p>
-          </div>
-          <div class="referee-column" style=" width: 240px">
-            <p>{{ getJobCategoryLavel(referee.jobCategory) }}</p>
-          </div>
-          <div class="referee-column" style="width: 200px">
-            <p>{{ referee.belongs }}</p>
-          </div>
-        </el-row>
+    </el-row>
+    <el-row v-for="(referee, i) in referees" :key="i" :gutter="20" class="referee-row">
+      <el-col :span="4">
+        <span class="name">{{ referee.name }} </span>
+        <el-tag v-if="referee.completedAt" size="small" type="success" effect="dark" style="font-weight: bold">完了</el-tag>
+        <el-tag v-else-if="referee.answer" size="small" effect="dark" style="font-weight: bold">途中</el-tag>
+        <el-tag v-else size="small" type="info">未回答</el-tag>
+      </el-col>
+      <el-col :span="20" style="display: flex">
+        <div class="referee-column" style="width: 130px">
+          <p>[{{ getTimeWorkingTogetherLabel(referee) }}]<span class="non-break">{{ getRelationshipLabel(referee) }}</span></p>
+        </div>
+        <div class="referee-column" style="width: 200px">
+          <p>{{ getDuration(referee) }}</p>
+        </div>
+        <div class="referee-column" style=" width: 240px">
+          <p>{{ referee.company }}</p>
+        </div>
+        <div class="referee-column" style=" width: 240px">
+          <p>{{ getJobCategoryLavel(referee.jobCategory) }}</p>
+        </div>
+        <div class="referee-column" style="width: 200px">
+          <p>{{ referee.belongs }}</p>
+        </div>
       </el-col>
     </el-row>
   </section>
@@ -57,10 +58,6 @@ import {
   getRelationshipOptionsByLang,
   getTimeWorkingOptionsByLang
 } from '@/constants/options'
-
-// モックを差し替え
-// PR作る
-// 下の方に関係性追加
 
 const getLabel = (options, target) => get(options.find(elem => elem.value === target), 'label')
 
@@ -90,13 +87,15 @@ export default {
   },
   data: () => {
     return {
-      statusProperty,
-      options: {
-        relationshipOptions: getRelationshipOptionsByLang(),
-        timeWorkingOptions: getTimeWorkingOptionsByLang(),
-        jobCategoryOptions: getJobCategoryOptionsByLang()
-      }
+      statusProperty
     }
+  },
+  computed: {
+    options: () => ({
+      relationshipOptions: getRelationshipOptionsByLang(),
+      timeWorkingOptions: getTimeWorkingOptionsByLang(),
+      jobCategoryOptions: getJobCategoryOptionsByLang()
+    })
   },
   methods: {
     getDuration(referee) {
@@ -133,28 +132,34 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+.non-break
+  word-break: keep-all
 .header
-  display: flex;
-  align-items: center;
+  display: flex
+  align-items: center
   font-size: 0.85rem
+  font-weight: bold
   .referee-column
     color: #909399
 .referee
-  word-break: break-all
   padding-bottom: -10px
   &-row
     padding-top: 16px
     padding-bottom: 8px
     display: flex
     &+&
-      border-top: 1px solid lightgray
+      border-top: 1px solid #EBEEF5
   &-column
     &+&
-      margin-left: 18px
+      margin-left: 16px
     p
-      margin-top: 8px
+      margin-top: 0
       margin-bottom: 0
+      color: #606266
+      font-size: 14px
 .name
+  font-weight: bold
+  color: #606266
   margin-top: 0
   margin-bottom: 4px
 .content
