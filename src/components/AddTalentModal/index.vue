@@ -87,11 +87,18 @@
           prop="siteWhereTalentApplied"
           style="text-align: left"
         >
-          <el-cascader
+          <el-select
             v-model="form.siteWhereTalentApplied"
-            :options="options.appliedSiteOptions"
+            filterable
             placeholder="選択してください"
-          />
+          >
+            <el-option
+              v-for="agent in options.appliedSiteOptions"
+              :key="agent.value"
+              :label="agent.label"
+              :value="agent.value"
+            />
+          </el-select>
         </el-form-item>
 
         <el-form-item label="企業担当者" prop="recruitmentOfficer">
@@ -400,7 +407,8 @@ export default {
         }
       ],
       templateQuestionsId: 'fulltimeDefault',
-      unsubscribe: () => {}
+      unsubscribe: () => {},
+      agents: []
     }
   },
   computed: {
@@ -719,6 +727,14 @@ export default {
         this.toggleLoading()
         this.close()
       }
+    },
+    querySearch(queryString, cb) {
+      const agents = this.options.appliedSiteOptions
+      const result = queryString ? agents.filter(this.createFilter(queryString)) : agents
+      cb(result)
+    },
+    createFilter(queryString) {
+      return (agent) => agent.value.indexOf(queryString) === 0
     }
   }
 }
