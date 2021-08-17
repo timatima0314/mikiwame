@@ -727,14 +727,6 @@ export default {
         this.toggleLoading()
         this.close()
       }
-    },
-    querySearch(queryString, cb) {
-      const agents = this.options.appliedSiteOptions
-      const result = queryString ? agents.filter(this.createFilter(queryString)) : agents
-      cb(result)
-    },
-    createFilter(queryString) {
-      return (agent) => agent.value.indexOf(queryString) === 0
     }
   }
 }
