@@ -31,12 +31,13 @@ export default {
             this._refereeApi.updateAll([{ id: refereeId, completedAt: new Date() }]),
             TalentApi({ companyId, talentId }).update({ status: statusProperty.refereesAnswered.key })
           ])
-        }).catch(() => {
+        }).catch((err) => {
           this.$notify({
             type: 'error',
             title: 'Error',
             message: this.notifyI18n.t('message.errorPleaseAuthenticateAgain')
           })
+          this.$rollbar.error(err)
           this.$router.push({ name: 'refereeAuthentication', query: this.$route.query })
         })
       }
