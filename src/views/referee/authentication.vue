@@ -159,13 +159,6 @@ export default {
     this.toggleLoading()
   },
   mounted() {
-    // "code-expired"のエラーコードが返ってくる場合への対処
-    // 認証コードを送信する前に認証済みになる？
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.onSucceed()
-      }
-    })
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
       'referee-authentication-button',
       { size: 'invisible' }
@@ -244,32 +237,29 @@ export default {
           this.loading = false
         })
     },
-    async onSucceed() {
-      this.$notify({
-        type: 'success',
-        title: 'Success',
-        message: this.refereeI18n.t('message.successfullyVerified')
-      })
-      const {
-        company: companyId,
-        talent: talentId,
-        token: refereeId
-      } = this.$route.query
-      // 電話番号をfirestoreに記録
-      await RefereeApi({ companyId, talentId, refereeId }).updateAll([
-        { id: refereeId, phoneNumber: this.form.tel }
-      ])
-      this.$router.push({
-        name: 'answerDescriptions',
-        query: this.$route.query
-      })
-    },
     async verifyCode() {
       this.loading = true
       await this.confirmationResult
         .confirm(this.verificationCode)
         .then(async(result) => {
-          await this.onSucceed()
+          this.$notify({
+            type: 'success',
+            title: 'Success',
+            message: this.refereeI18n.t('message.successfullyVerified')
+          })
+          const {
+            company: companyId,
+            talent: talentId,
+            token: refereeId
+          } = this.$route.query
+          // 電話番号をfirestoreに記録
+          await RefereeApi({ companyId, talentId, refereeId }).updateAll([
+            { id: refereeId, phoneNumber: this.form.tel }
+          ])
+          this.$router.push({
+            name: 'answerDescriptions',
+            query: this.$route.query
+          })
         })
         .catch((err) => {
           if (err.code === 'auth/invalid-verification-code') {
