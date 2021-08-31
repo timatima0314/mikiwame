@@ -49,3 +49,6 @@ if (willFuncRequire('getRiskCheckResultUrl')) exports.getRiskCheckResultUrl = re
 if (willFuncRequire('createOrUpdateCreditCard')) exports.createOrUpdateCreditCard = require('./src/payment/usecase/createOrUpdateCreditCard')
 
 if (willFuncRequire('evaluateSelectionAnswers')) exports.evaluateSelectionAnswers = require('./src/answers/evaluation')
+
+// UseCase
+if (willFuncRequire('completeReferenceCheck')) exports.completeReferenceCheck = require('./src/api/usecase/complete_reference_check').completeReferenceCheck
