@@ -51,4 +51,4 @@ if (willFuncRequire('createOrUpdateCreditCard')) exports.createOrUpdateCreditCar
 if (willFuncRequire('evaluateSelectionAnswers')) exports.evaluateSelectionAnswers = require('./src/answers/evaluation')
 
 // UseCase
-if (willFuncRequire('completeReferenceCheck')) exports.completeReferenceCheck = require('./src/api/usecase/complete_reference_check').completeReferenceCheck
+if (willFuncRequire('completeReferenceCheck')) exports.completeReferenceCheck = require('./src/api/usecase/complete_reference_check')

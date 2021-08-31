@@ -17,8 +17,7 @@ const { getTalentDocumentRefByIds } = require('../util')
  * @property {string} refereeId
  * @property {boolean} awakeRun
  */
-
-exports.completeReferenceCheck = functions
+module.exports = functions
   .region('asia-northeast1')
   .https.onCall(
     /** @param {Props} data */
