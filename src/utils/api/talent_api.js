@@ -19,10 +19,10 @@ export const TalentApi = ({ companyId, talentId }) => ({
   },
 
   /**
-   * @param {object} arg
-   * @param {string} arg.companyId
-   * @param {string} arg.talentId
-   * @param {object} arg.data talentドキュメントのフィールド
+   * @param {object} data
+   * @param {string} data.companyId
+   * @param {string} data.talentId
+   * @param {object} data.data talentドキュメントのフィールド
    */
   async update(data) {
     return functions.httpsCallable('updateTalentByIds')({
