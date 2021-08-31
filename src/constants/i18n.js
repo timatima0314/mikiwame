@@ -37,7 +37,7 @@ const messages = {
         yourNameOnTheFront: '2枚とも氏名が記載されている面を表にして撮影してください。',
         uploadPicture: '写真アップロード',
         notSelected: '選択されていません',
-        registerAndContinue: '登録して次へ',
+        registerAndContinue: '回答を完了する',
         thankYouReferenceCheck: 'リファレンスチェックへのご協力ありがとうございました',
         informationKeptInStrictConfidence: 'ご回答頂きました情報は厳重に管理させていただきます。',
         failedToLoadPhoto: '写真の読み込みに失敗しました。通信環境を確認したうえで再度お試しください。',
