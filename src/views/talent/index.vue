@@ -355,6 +355,7 @@ export default {
 
       // 推薦者が追加された場合、
       // リファレンスチェックの完了フラグをオフにする
+      // TODO: #37 ステータスの完了の定義に変更の必要がある
       if (this.addedReferees.length) {
         const talentApi = TalentApi({ companyId, talentId })
         await talentApi.update({ completedAt: null, status: statusProperty.refereesRegistered.key }).catch(() => {})
