@@ -41,7 +41,8 @@ module.exports = functions
       'toggleAuthDisabled',
       'updateRefereesByIds',
       'updateSubAccountByIds',
-      'updateTalentByIds'
+      'updateTalentByIds',
+      'completeReferenceCheck'
     ]
 
     functionEndpoints.forEach(endpoint => {
