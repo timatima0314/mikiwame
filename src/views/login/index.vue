@@ -136,6 +136,7 @@ import ResetPasswordModal from '@/components/ResetPasswordModal'
 import { useCompany, updateCompany } from '@/utils/hooks/firestore'
 import get from 'lodash/get'
 import { isTrial } from '@/utils/isTrial'
+import * as Sentry from '@sentry/vue'
 
 const LOGIN_STATUSES = { MAIL_LOGIN: 'MAIL_LOGIN', PHONE_LOGIN: 'PHONE_LOGIN' }
 
