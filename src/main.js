@@ -29,7 +29,7 @@ import { Integrations } from '@sentry/tracing'
 Sentry.init({
   Vue,
   dsn: 'https://c7dce3eb4d4745a387c11ef9a0356ecd@o992535.ingest.sentry.io/5950085',
-  release: process.env.SENTRY_RELEASE,
+  release: process.env.VERSION,
   integrations: [
     new Integrations.BrowserTracing({
       routingInstrumentation: Sentry.vueRouterInstrumentation(router),

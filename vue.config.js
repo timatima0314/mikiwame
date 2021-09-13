@@ -19,16 +19,16 @@ const SentryWebpackPlugin = require('@sentry/webpack-plugin')
 const plugins = []
 
 if (process.env.NODE_ENV === 'production') {
-plugins.push(new SentryWebpackPlugin({
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_ORG,
-  release: process.env.SENTRY_RELEASE,
-  include: '.',
-  ignore: ['node_modules', 'build'],
-  urlPrefix: '~/static/js/'
-}))
-
+  plugins.push(new SentryWebpackPlugin({
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+    release: process.env.VERSION,
+    include: '.',
+    ignore: ['node_modules', 'build'],
+    urlPrefix: '~/static/js/'
+  }))
+}
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
