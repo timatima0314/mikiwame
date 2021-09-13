@@ -38,6 +38,7 @@
 import { mapGetters } from 'vuex'
 import { updateSubAccount } from '@/utils/hooks/firestore'
 import { companiesCollectionRef } from '@/plugins/firebase'
+import * as Sentry from '@sentry/vue'
 
 const getDefaultFormValues = () => ({
   name: '',
@@ -149,7 +150,7 @@ export default {
           this.form = getDefaultFormValues()
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$notify({
             type: 'error',
             title: 'Error',

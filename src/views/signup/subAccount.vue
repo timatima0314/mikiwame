@@ -64,6 +64,7 @@
 import firebase from 'firebase/app'
 import { emailRules, passwordRules } from '@/constants/validation'
 import { functions } from '@/plugins/firebase'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'SubAccountSignUp',
@@ -142,7 +143,7 @@ export default {
               this.$router.push({ name: 'signupSubAccountPhone' })
             })
             .catch(async(err) => {
-              this.$rollbar.error(err)
+              Sentry.captureException(new Error(err))
               this.loading = false
               // サブアカウントの登録に失敗したら、新規登録をやり直せるようにユーザーを削除しておく
               this.$message({
@@ -158,7 +159,7 @@ export default {
             })
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.loading = false
           if (err.code === 'auth/email-already-in-use') {
             this.$message({

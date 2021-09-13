@@ -243,7 +243,7 @@ export default {
               })
             })
             .catch((err) => {
-              this.$rollbar.error(err)
+              Sentry.captureException(new Error(err))
               this.$alert(
                 '通信環境を確認したうえで再度お試しください。',
                 '認証コードの送信に失敗しました'
@@ -252,7 +252,7 @@ export default {
             })
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$alert(
             'アカウントが登録されていないか、権限がありません',
             'ログインに失敗しました',
@@ -309,7 +309,7 @@ export default {
           this.$router.push(this.redirect || '/')
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$message.error(
             '通信エラーが発生しました。通信環境を確認したうえで再度お試しください。'
           )

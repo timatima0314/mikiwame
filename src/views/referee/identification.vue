@@ -20,6 +20,7 @@
 <script>
 import firebase from 'firebase/app'
 import { refereePageMixin } from './mixin/refereePageMixin'
+import * as Sentry from '@sentry/vue'
 
 const ALREADY_UPLOADED = Symbol('ALREADY_UPLOADED')
 const reader = new FileReader()
@@ -55,7 +56,7 @@ export default {
       const ref = storageRef.child(this.storagePath)
       return ref.getDownloadURL().then(url => {
         this.uploadedImages = { src: url, file: ALREADY_UPLOADED }
-      }).catch(this.$rollbar.error)
+      }).catch(this.Sentry.error)
     }).finally(this.toggleLoading)
   },
   methods: {
@@ -70,7 +71,7 @@ export default {
       }).then(imageSrc => {
         this.uploadedImages = { src: imageSrc, file }
       }).catch(err => {
-        this.$rollbar.error(err)
+        Sentry.captureException(new Error(err))
         this.$notify({ type: 'error', title: 'Error', message: this.refereeI18n.t('message.failedToLoadPhoto') })
       })
     },
@@ -87,7 +88,7 @@ export default {
         this.$notify({ type: 'success', title: 'Success', message: this.refereeI18n.t('message.uploadedBusinessCard') })
         this.goCompletePage()
       }).catch(err => {
-        this.$rollbar.error(err)
+        Sentry.captureException(new Error(err))
         this.$notify({ type: 'error', title: 'Error', message: this.refereeI18n.t('message.failedToUploadBusinessCard') })
         this.toggleLoading()
       })

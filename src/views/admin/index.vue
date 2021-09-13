@@ -123,6 +123,7 @@ import { getCompanies, updateCompany } from '@/utils/hooks/firestore'
 import { PLANS } from '@/utils/payment'
 import { PLAN_STATUS_TO_TEXT, getPlanStatus } from '@/utils/plan_statuses'
 import get from 'lodash/get'
+import * as Sentry from '@sentry/vue'
 
 const getDefaultEditingCompany = () => ({
   id: null,
@@ -264,7 +265,7 @@ export default {
         const confirm = await this.$confirm(body, title).catch(() => {})
         if (confirm) await this.notifyCompanyEndPlanUpgrade(targetCompanyId)
       } catch (err) {
-        this.$rollbar.error(err)
+        Sentry.captureException(new Error(err))
         this.$notify({
           type: 'error',
           title: 'Error',
@@ -287,7 +288,7 @@ export default {
           })
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$notify({
             type: 'error',
             title: 'Error',
@@ -311,7 +312,7 @@ export default {
           })
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$notify({
             type: 'error',
             title: 'Error',
@@ -348,7 +349,7 @@ export default {
           this.fetchCompanies()
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$notify({
             type: 'error',
             title: 'Error',
@@ -399,7 +400,7 @@ export default {
           this.fetchCompanies()
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$notify({
             type: 'error',
             title: 'Error',

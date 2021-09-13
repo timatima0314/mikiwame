@@ -19,6 +19,7 @@
 <script>
 import { RefereeApi } from '@/utils/api/referee_api'
 import { getI18n } from '@/constants/i18n'
+import * as Sentry from '@sentry/vue'
 
 export default {
   data: () => ({
@@ -45,7 +46,7 @@ export default {
       this.talentName = talentName
       await refereeApi.update({ isUnsubscribeRemind: true })
     } catch (err) {
-      this.$rollbar.error(err)
+      Sentry.captureException(new Error(err))
       this.hasError = true
     } finally {
       this.loading = false

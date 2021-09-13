@@ -123,6 +123,7 @@ import {
   getRelationshipOptionsByLang,
   getTimeWorkingOptionsByLang
 } from '@/constants/options'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'TalentEdit',
@@ -292,7 +293,7 @@ export default {
           })
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$message({
             message:
               '更新に失敗しました。通信環境を確認したうえで再度お試しください。',

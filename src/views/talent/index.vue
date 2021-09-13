@@ -126,6 +126,7 @@ import { getRelationshipOptionsByLang, getTimeWorkingOptionsByLang, getJobCatego
 import { statusProperty } from '@/constants/status'
 import { freeEmailProviderDomains } from '@/constants/free_email_provider_domains'
 import { getI18n } from '@/constants/i18n'
+import * as Sentry from '@sentry/vue'
 
 const defaultBreakdown = () => ({
   relationship: '',
@@ -344,7 +345,7 @@ export default {
       }
       const results = await Promise.all(requests)
         .catch(err => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$notify({
             title: 'Error',
             message: this.notifyI18n.t('message.errorSaving'),

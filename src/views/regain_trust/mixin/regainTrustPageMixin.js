@@ -1,4 +1,5 @@
 import { TalentApi } from '@/utils/api/talent_api'
+import * as Sentry from '@sentry/vue'
 
 export const regainTrustPageMixin = {
   data: () => ({
@@ -70,7 +71,7 @@ export const regainTrustPageMixin = {
       })
     },
     notifyError(err = null) {
-      if (err) this.$rollbar.error(err)
+      if (err) Sentry.captureException(new Error(err))
       this.$notify({
         title: 'Error',
         message: '回答の送信に失敗しました。通信環境を確認したうえで再度お試しください。',
