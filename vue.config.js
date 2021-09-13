@@ -15,8 +15,24 @@ const name = defaultSettings.title || 'MiKiWaMe Point' // page title
 // port = 9528 npm run dev OR npm run dev --port = 9528
 const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
+const SentryWebpackPlugin = require('@sentry/webpack-plugin')
+const plugins = []
+
+if (process.env.NODE_ENV === 'production') {
+plugins.push(new SentryWebpackPlugin({
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_ORG,
+  release: process.env.SENTRY_RELEASE,
+  include: '.',
+  ignore: ['node_modules', 'build'],
+  urlPrefix: '~/static/js/'
+}))
+
+
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
+
   /**
    * You will need to set publicPath if you plan to deploy your site under a sub path,
    * for example GitHub Pages. If you plan to deploy your site to https://foo.github.io/bar/,
@@ -42,6 +58,13 @@ module.exports = {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
     name: name,
+    devtool: 'source-map',
+    output: {
+      // path: path.resolve(__dirname, '../static'),
+
+      sourceMapFilename: '[name].min.js'
+    },
+    plugins,
     resolve: {
       alias: {
         '@': resolve('src')
