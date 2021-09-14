@@ -84,6 +84,7 @@ import dayjs from 'dayjs'
 import pick from 'lodash/pick'
 import AddSubAccountModal from '@/components/subAccountModal/add'
 import EditSubAccountModal from '@/components/subAccountModal/edit'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'CompanyAccounts',
@@ -171,7 +172,7 @@ export default {
           })
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$notify({
             type: 'error',
             title: 'Error',
@@ -210,7 +211,7 @@ export default {
           this.loading = false
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$notify({
             type: 'error',
             title: 'Error',
@@ -255,7 +256,7 @@ export default {
           message: 'アカウントを完全に削除しました。'
         })
       } catch (err) {
-        this.$rollbar.error(err)
+        Sentry.captureException(new Error(err))
         this.$notify({
           type: 'error',
           title: 'Error',

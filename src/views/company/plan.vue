@@ -107,6 +107,7 @@ import { functions } from '@/plugins/firebase'
 import { updateCompany } from '@/utils/hooks/firestore'
 import { PLANS } from '@/utils/payment'
 import { PLAN_STATUSES } from '@/utils/plan_statuses'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'CompanyPlan',
@@ -140,7 +141,7 @@ export default {
           PLAN_STATUSES.ORDERING_STANDARD
         )
       } catch (err) {
-        this.$rollbar.error(err)
+        Sentry.captureException(new Error(err))
         this.$notify({
           type: 'error',
           title: 'Error',

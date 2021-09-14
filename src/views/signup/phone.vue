@@ -89,6 +89,7 @@ import firebase from 'firebase/app'
 import { anonymizePhoneNumber } from '@/utils/phone'
 import { functions } from '@/plugins/firebase'
 import { telRules } from '@/constants/validation'
+import * as Sentry from '@sentry/vue'
 
 const SIGNUP_STATUSES = {
   INPUT_PHONE_NUMBER: 'INPUT_PHONE_NUMBER',
@@ -158,7 +159,7 @@ export default {
           phoneNumber: this.form.tel
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$message({
             message:
               'ネットワークエラーが発生しました。通信環境を確認したうえで再度お試しください。',
@@ -193,7 +194,7 @@ export default {
               type: 'error'
             })
           } else {
-            this.$rollbar.error(err)
+            Sentry.captureException(new Error(err))
           }
         })
         .finally(() => {
@@ -222,7 +223,7 @@ export default {
           this.$router.push({ name: 'companyIndex' })
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           const ERRORS = {
             'auth/credential-already-in-use':
               '電話番号が他のアカウントで使用されています',

@@ -2,6 +2,7 @@ import { RefereeApi } from '@/utils/api/referee_api'
 import { selectionPatterns, radioSelectionText, radioSelectionScore } from '@/constants/questions'
 import { getI18n } from '@/constants/i18n'
 import dayjs from 'dayjs'
+import * as Sentry from '@sentry/vue'
 
 export const refereePageMixin = {
   data: () => ({
@@ -131,7 +132,7 @@ export const refereePageMixin = {
       })
     },
     notifyError(err = null) {
-      if (err) this.$rollbar.error(err)
+      if (err) Sentry.captureException(new Error(err))
       this.$notify({
         title: 'Error',
         message: this.notifyI18n.tc('message.answerSentFailed'),

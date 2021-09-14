@@ -23,25 +23,30 @@ import '@/permission' // permission control
 import '@/plugins/firebase'
 import VueMq from 'vue-mq' // PCかモバイルを判断
 
-import Rollbar from 'rollbar' // クライアント側で起きたエラーを収集してSlackに通知を飛ばす
+import * as Sentry from '@sentry/vue'
+import { Integrations } from '@sentry/tracing'
 
-if (process.env.NODE_ENV === 'production') {
-  Vue.prototype.$rollbar = new Rollbar({
-    accessToken: process.env.VUE_APP_ROLLBAR_ACCESS_TOKEN,
-    captureUncaught: true,
-    captureUnhandledRejections: true,
-    payload: {
-      environment: process.env.VUE_APP_ROLLBAR_ENV
-    }
-  })
+Sentry.init({
+  Vue,
+  dsn: process.env.ENV === 'production' ? process.env.VUE_APP_SENTRY_DSN : false,
+  // release: process.env.VERSION ソースマップ表示に必要
+  integrations: [
+    new Integrations.BrowserTracing({
+      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+      tracingOrigins: ['localhost', 'app.mikiwame-p.jp', /^\//]
+    })
+  ],
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0
+})
 
-  Vue.config.errorHandler = (err, vm, info) => {
-    vm.$rollbar.error(err)
-    throw err // rethrow
-  }
-} else {
-  Vue.prototype.$rollbar = console
-}
+// ユーザー設定時に使用
+// const user = { id: 'xxx', email: 'yyyyy@zzzzz.com' }
+// Sentry.configureScope((scope) => {
+//   scope.setUser({ id: user.id, email: user.email })
+// })
 
 /**
  * If you don't want to use mock-server

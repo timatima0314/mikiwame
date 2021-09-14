@@ -144,6 +144,7 @@ import { emailRules, passwordRules } from '@/constants/validation'
 import { functions, companiesCollectionRef } from '@/plugins/firebase'
 import TermsOfService from './_terms_of_service'
 import { PLANS } from '@/utils/payment'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'SignUp',
@@ -255,7 +256,7 @@ export default {
         )
         .catch((err) => {
           this.loading = false
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           if (err.code === 'auth/email-already-in-use') {
             this.$message({
               message: 'すでに登録済みのメールアドレスです',
@@ -292,7 +293,7 @@ export default {
           .catch(() => {})
         this.$router.push({ name: 'signupPhone' })
       } catch (err) {
-        this.$rollbar.error(err)
+        Sentry.captureException(new Error(err))
         this.loading = false
         // 会社の登録に失敗したら、新規登録をやり直せるようにユーザーを削除しておく
         this.$message({

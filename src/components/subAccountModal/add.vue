@@ -37,6 +37,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { functions, companiesCollectionRef } from '@/plugins/firebase'
+import * as Sentry from '@sentry/vue'
 
 const getDefaultFormValues = () => ({
   name: '',
@@ -121,7 +122,7 @@ export default {
       const newSubAccountData = await subAccountRef
         .add({ ...this.form, createdAt: new Date() })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$notify({
             type: 'error',
             title: 'Error',

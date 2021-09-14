@@ -159,6 +159,7 @@ import {
   getDefaultQuestionsForRookieByLang
 } from '@/constants/questions'
 import { getAnswererRanks, getQuestionsLangByLang } from '@/constants/options'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'TemplateQuestions',
@@ -306,7 +307,7 @@ export default {
           })
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$message({
             message:
               '削除に失敗しました。通信環境を確認したうえで再度お試しください。',

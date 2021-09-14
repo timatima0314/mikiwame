@@ -75,6 +75,7 @@ import { functions, withdrawalQuestionnairesRef } from '@/plugins/firebase'
 import { useCompany, updateCompany } from '@/utils/hooks/firestore'
 import { mapGetters } from 'vuex'
 import { getReasonsForWithdrawalOptions } from '@/constants/options'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'Index',
@@ -118,7 +119,7 @@ export default {
 
       this.company.name = companyDocumentSnapshot.name
     } catch (err) {
-      this.$rollbar.error(err)
+      Sentry.captureException(new Error(err))
     } finally {
       this.toggleLoading()
     }
@@ -138,7 +139,7 @@ export default {
 
       await withdrawalQuestionnairesRef.add({ ...this.form, companyId: this.companyId, createdAt: new Date() })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
         })
 
       await updateCompany({ companyId: this.companyId, data: { deletedAt: new Date() }})

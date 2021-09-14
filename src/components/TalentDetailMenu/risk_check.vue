@@ -63,6 +63,7 @@
 import { mapGetters } from 'vuex'
 import get from 'lodash/get'
 import { functions } from '@/plugins/firebase'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'RiskCheck',
@@ -112,7 +113,7 @@ export default {
           this.webClipCount = response.data.webClipCount
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           if (err.code === 'permission-denied') {
             this.$notify({
               type: 'error',
@@ -142,7 +143,7 @@ export default {
           window.open(response.data.resultUrl)
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$notify({
             type: 'error',
             title: 'Error',
