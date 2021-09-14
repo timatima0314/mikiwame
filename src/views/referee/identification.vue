@@ -56,7 +56,7 @@ export default {
       const ref = storageRef.child(this.storagePath)
       return ref.getDownloadURL().then(url => {
         this.uploadedImages = { src: url, file: ALREADY_UPLOADED }
-      }).catch(this.Sentry.error)
+      }).catch((err) => Sentry.captureException(new Error(err)))
     }).finally(this.toggleLoading)
   },
   methods: {
