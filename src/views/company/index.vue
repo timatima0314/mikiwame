@@ -226,6 +226,7 @@ import Status from '@/components/TalentDetailMenu/status'
 import RefereeList from '@/components/TalentDetailMenu/referee_list'
 import { PLAN_STATUSES } from '@/utils/plan_statuses'
 import { getI18n } from '@/constants/i18n'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'Dashboard',
@@ -432,7 +433,7 @@ export default {
             this.selectedTalentData = {}
           })
           .catch((err) => {
-            this.$rollbar.error(err)
+            Sentry.captureException(new Error(err))
             this.$message({
               message:
                 '削除に失敗しました。通信環境を確認したうえで再度お試しください。',

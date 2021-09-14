@@ -12,6 +12,7 @@
 import { refereePageMixin } from './mixin/refereePageMixin'
 import firebase from 'firebase/app'
 import { completeReferenceCheck } from '@/utils/api/usecase/completeReferenceCheck.js'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'RefereeComplete',
@@ -41,7 +42,7 @@ export default {
         title: 'Error',
         message: this.notifyI18n.t('message.errorPleaseAgain')
       })
-      this.$rollbar.error(err)
+      Sentry.captureException(new Error(err))
     } finally {
       this.toggleLoading()
     }

@@ -53,6 +53,7 @@ import dayjs from 'dayjs'
 import Papa from 'papaparse'
 import { getRiskEyesBillingRefByYYYYMM } from '@/plugins/firebase'
 import { RISK_EYES_UNIT_PRICE } from '@/constants/billing'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'UploadRiskEyesCSV',
@@ -87,7 +88,7 @@ export default {
             month.format('YYYYMM')
           )
             .get()
-            .catch((err) => this.$rollbar.error(err))
+            .catch((err) => Sentry.captureException(new Error(err)))
           const hasUploaded = snapshot && snapshot.exists
           return {
             month: month.format('YYYY年MM月分'),
@@ -111,7 +112,7 @@ export default {
           this.$emit('upload-end')
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$notify({
             type: 'error',
             title: 'Error',

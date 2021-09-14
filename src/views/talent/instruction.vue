@@ -47,6 +47,7 @@ import { statusProperty } from '@/constants/status'
 import TermsOfService from '@/components/TermsOfService'
 import Deadline from '@/components/Deadline'
 import { getI18n } from '@/constants/i18n'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'Instruction',
@@ -98,7 +99,7 @@ export default {
       }
       this.estimatedMinutes = estimatedMinutes
     } catch (err) {
-      this.$rollbar.error(err)
+      Sentry.captureException(new Error(err))
     } finally {
       this.toggleLoading()
     }

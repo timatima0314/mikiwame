@@ -755,7 +755,7 @@ export default {
           }
         })
       } catch (err) {
-        this.$rollbar.error(err)
+        Sentry.captureException(new Error(err))
         this.$message({
           message: '更新に失敗しました。通信環境を確認したうえで再度お試しください。',
           type: 'error'
@@ -769,7 +769,7 @@ export default {
           talentId: this.talent.id
         })
       } catch (err) {
-        this.$rollbar.error(err)
+        Sentry.captureException(new Error(err))
         this.$message({
           message: 'メール送信に失敗しました。通信環境を確認したうえで再度お試しください。',
           type: 'error'
@@ -787,7 +787,7 @@ export default {
           type: 'success'
         })
       }).catch(err => {
-        this.$rollbar.error(err)
+        Sentry.captureException(new Error(err))
         this.$message({
           message: '更新に失敗しました。通信環境を確認したうえで再度お試しください。',
           type: 'error'

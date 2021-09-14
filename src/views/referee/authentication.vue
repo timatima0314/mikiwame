@@ -101,6 +101,7 @@ import { functions } from '@/plugins/firebase'
 import { RefereeApi } from '@/utils/api/referee_api'
 import { refereePageMixin } from './mixin/refereePageMixin'
 import { telRules } from '@/constants/validation'
+import * as Sentry from '@sentry/vue'
 
 const STATUSES = {
   INPUT_PHONE_NUMBER: 'INPUT_PHONE_NUMBER',
@@ -183,7 +184,7 @@ export default {
           phoneNumber: this.form.tel
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$message({
             message: this.notifyI18n.t('message.errorPhoneRegisteredCheck'),
             type: 'error'
@@ -230,7 +231,7 @@ export default {
               }),
               type: 'error'
             })
-            this.$rollbar.error(err)
+            Sentry.captureException(new Error(err))
           }
         })
         .finally(() => {
@@ -274,7 +275,7 @@ export default {
               }),
               type: 'error'
             })
-            this.$rollbar.error(err)
+            Sentry.captureException(new Error(err))
           }
         })
         .finally(() => {

@@ -70,6 +70,7 @@ import { functions } from '@/plugins/firebase'
 import { useCompany } from '@/utils/hooks/firestore'
 import Notice from '@/views/config/_components/notice'
 import { updateCompany } from '@/utils/hooks/firestore'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'CreditCardInput',
@@ -191,7 +192,7 @@ export default {
         })
         this.$router.push({ name: 'config' })
       } catch (err) {
-        this.$rollbar.error(err.message)
+        Sentry.captureException(new Error(err))
         this.$notify({
           type: 'error',
           title: 'Error',

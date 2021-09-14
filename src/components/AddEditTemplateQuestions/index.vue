@@ -131,6 +131,7 @@ import {
 import { companiesCollectionRef } from '@/plugins/firebase'
 import { updateTemplateQuestions } from '@/utils/hooks/firestore'
 import { getAnswererRanks, getQuestionsLangByLang } from '@/constants/options'
+import * as Sentry from '@sentry/vue'
 
 const breakpoints = {
   sp: 800,
@@ -279,7 +280,7 @@ export default {
           this.close()
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$alert(
             '通信環境を確認したうえで再度お試しください。',
             '解析対象の追加に失敗しました'
@@ -313,7 +314,7 @@ export default {
           this.close()
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$message({
             message:
               '更新に失敗しました。通信環境を確認したうえで再度お試しください。',

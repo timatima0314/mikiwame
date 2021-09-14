@@ -50,6 +50,7 @@
 
 <script>
 import firebase from 'firebase/app'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'ResetPassword',
@@ -90,7 +91,7 @@ export default {
         this.auth.email = email
       })
       .catch((err) => {
-        this.$rollbar.error(err)
+        Sentry.captureException(new Error(err))
         this.$message({
           message: 'リンクの有効期限が切れています',
           type: 'error'
@@ -117,7 +118,7 @@ export default {
           this.redirectToLogin()
         })
         .catch((err) => {
-          this.$rollbar.error(err)
+          Sentry.captureException(new Error(err))
           this.$message({
             message:
               'パスワードの再設定に失敗しました。通信環境を確認したうえで再度お試しください。',

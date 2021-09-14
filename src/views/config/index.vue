@@ -94,6 +94,7 @@ import { mapGetters } from 'vuex'
 import { normalizePhoneNumber } from '@/utils/phone'
 import { useCompany, useSubAccount, updateCompany, updateSubAccount } from '@/utils/hooks/firestore'
 import { adminConfigsRef } from '@/plugins/firebase'
+import * as Sentry from '@sentry/vue'
 
 export default {
   name: 'Config',
@@ -202,7 +203,7 @@ export default {
 
         this.$message({ message: '設定の更新に成功しました', type: 'success' })
       } catch (err) {
-        this.$rollbar.error(err)
+        Sentry.captureException(new Error(err))
         this.$message({ message: '設定の更新に失敗しました', type: 'error' })
       } finally {
         this.loading = false
