@@ -28,8 +28,8 @@ import { Integrations } from '@sentry/tracing'
 
 Sentry.init({
   Vue,
-  dsn: process.env.ENV === 'production' ? 'https://c7dce3eb4d4745a387c11ef9a0356ecd@o992535.ingest.sentry.io/5950085' : false,
-  release: process.env.VERSION,
+  dsn: process.env.ENV === 'production' ? process.env.VUE_APP_SENTRY_DSN : false,
+  // release: process.env.VERSION ソースマップ表示に必要
   integrations: [
     new Integrations.BrowserTracing({
       routingInstrumentation: Sentry.vueRouterInstrumentation(router),

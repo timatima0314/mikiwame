@@ -15,20 +15,20 @@ const name = defaultSettings.title || 'MiKiWaMe Point' // page title
 // port = 9528 npm run dev OR npm run dev --port = 9528
 const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
-const SentryWebpackPlugin = require('@sentry/webpack-plugin')
-const plugins = []
-
-if (process.env.NODE_ENV === 'production') {
-  plugins.push(new SentryWebpackPlugin({
-    authToken: process.env.SENTRY_AUTH_TOKEN,
-    org: process.env.SENTRY_ORG,
-    project: process.env.SENTRY_PROJECT,
-    release: process.env.VERSION,
-    include: '.',
-    ignore: ['node_modules', 'build'],
-    urlPrefix: '~/static/js/'
-  }))
-}
+// TODO: ソースマップ表示
+// const SentryWebpackPlugin = require('@sentry/webpack-plugin')
+// const plugins = []
+// if (process.env.NODE_ENV === 'production') {
+//   plugins.push(new SentryWebpackPlugin({
+//     authToken: process.env.SENTRY_AUTH_TOKEN,
+//     org: process.env.SENTRY_ORG,
+//     project: process.env.SENTRY_PROJECT,
+//     release: process.env.VERSION,
+//     include: '.',
+//     ignore: ['node_modules', 'build'],
+//     urlPrefix: '~/static/js/'
+//   }))
+// }
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -60,11 +60,11 @@ module.exports = {
     name: name,
     devtool: 'source-map',
     output: {
-      // path: path.resolve(__dirname, '../static'),
+      // path: path.resolve(__dirname, '../static'), ソースマップ表示に使用するかも
 
       sourceMapFilename: '[name].min.js'
     },
-    plugins,
+    // plugins, ソースマップ表示に使用
     resolve: {
       alias: {
         '@': resolve('src')
