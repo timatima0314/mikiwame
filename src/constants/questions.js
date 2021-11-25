@@ -112,14 +112,14 @@ export const getDefaultQuestions = () => ({
       key: 'honest',
       text: {
         jp: '嘘をついたり、他人を中傷することがあった。',
-        en: 'The candidate did not lie or slander others. He/she was always sincere.',
+        en: 'The candidate did sometimes lied or slandered others.',
         cn: '會說謊或是陷害他人。'
       }
     }, {
       key: 'noHarassment',
       text: {
         jp: 'パワハラやセクハラなどのハラスメント行為などが見受けられた。',
-        en: 'There was no harassment or sexual harassment whatsoever.',
+        en: 'The candidate was found to have harassing behavior such as power harassment and sexual harassment.',
         cn: '曾經有過性騷擾或是言語或肢體上的騷擾行為。'
       }
     }, {
