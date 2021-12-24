@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - "functions/**"
-      - "!functions/patches/**"
 
 defaults:
   run:

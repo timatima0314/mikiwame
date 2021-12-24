@@ -3,12 +3,7 @@ name: Prod Hosting
 on:
   push:
     branches:
-    - master
-    paths-ignore:
-    - 'functions/**'
-    - '.github/**'
-    - 'README.md'
-    - 'docs/**'
+      - master
 
 jobs:
   build:
