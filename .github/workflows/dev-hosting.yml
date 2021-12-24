@@ -26,7 +26,7 @@ jobs:
           VUE_APP_ROLLBAR_ENV: mikiwame-dev
 
       - name: Deploy to Firebase Hosting
-        uses: w9jds/firebase-action@v1.3.0
+        uses: w9jds/firebase-action@master
         with:
           args: deploy --only hosting --project=dev
         env:
