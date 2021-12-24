@@ -626,6 +626,7 @@ export default {
           .collection('talents')
           .add({
             ...this.form,
+            siteWhereTalentApplied: [this.form.siteWhereTalentApplied],
             status: statusProperty.talentRegistered.key,
             refereeBreakdown: this.form.refereeBreakdown.map((breakdown) => ({
               ...breakdown,
