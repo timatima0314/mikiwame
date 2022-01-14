@@ -17,10 +17,10 @@ module.exports = functions
   .schedule('every day 12:00')
   .timeZone('Asia/Tokyo')
   .onRun(() =>
-    companiesCollectionRef.get().then(companiesSnapshot => {
+    companiesCollectionRef.get().then(companiesSnapshot =>
       companiesSnapshot.forEach(companyDoc =>
         // each company
-        companyDoc.ref.collection('talents').get().then(talentsSnapshot => {
+        companyDoc.ref.collection('talents').get().then(talentsSnapshot =>
           talentsSnapshot.forEach(async talentDoc => {
             // each talent
             const talentData = talentDoc.data()
@@ -47,7 +47,7 @@ module.exports = functions
             }
 
             // リファレンスチェックを終えていない推薦者がいる場合
-            refereesSnapshot.docs.forEach(refereeDoc => {
+            refereesSnapshot.docs.forEach(async refereeDoc => {
               const refereeData = refereeDoc.data()
               if (refereeData.completedAt) return
               if (refereeData.isUnsubscribeRemind) return // リマインドメールの配信停止を希望している
@@ -65,15 +65,15 @@ module.exports = functions
               }
             })
           })
-        })
+        ).catch(console.error)
       )
-    })
+    ).catch(console.error)
   )
 
 /**
  * 当日がリマインドを行うべき日付かを判定する関数。
  * 「リファレンスチェックを終えていない」判定はすでになされている前提であり、この関数では行わない。
- * @param {Date} deadline 
+ * @param {Date} deadline
  * @returns {boolean}
  */
 function shouldRemindDate(deadline) {
