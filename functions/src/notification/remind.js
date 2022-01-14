@@ -65,9 +65,9 @@ module.exports = functions
               }
             })
           })
-        )
+        ).catch(console.error)
       )
-    )
+    ).catch(console.error)
   )
 
 /**
