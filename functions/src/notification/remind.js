@@ -30,13 +30,13 @@ module.exports = functions
         const refereesSnapshot = await talentDoc.ref.collection('referees').get()
         // 推薦者を1人も登録していない場合
         if (refereesSnapshot.docs.length === 0 && shouldRemindDate(talentData.deadline.toDate())) {
-          console.log(`send remind to talent: ${talentDoc.ref.path}`)
+          functions.logger.log(`send remind to talent: ${talentDoc.ref.path}`)
           await sendRemindToTalent({
             companyName: companyDoc.data().name,
             companyId: companyDoc.id,
             talentId: talentDoc.id,
             talentData,
-          }).catch(console.error)
+          }).catch(functions.logger.error)
           return
         }
 
@@ -55,7 +55,7 @@ module.exports = functions
           if (refereeData.isUnsubscribeRemind) return // リマインドメールの配信停止を希望している
 
           if (shouldRemindDate(talentData.deadline.toDate())) {
-            console.log(`send remind to referee: ${refereeDoc.ref.path}`)
+            functions.logger.log(`send remind to referee: ${refereeDoc.ref.path}`)
             // リファレンスチェックを終えていない かつ 条件を満たしている場合
             await sendRemindToReferee({
               companyId: companyDoc.id,
@@ -63,7 +63,7 @@ module.exports = functions
               refereeId: refereeDoc.id,
               talentData,
               refereeData
-            }).catch(console.error)
+            }).catch(functions.logger.error)
           }
         })
 
