@@ -16,59 +16,65 @@ module.exports = functions
   .pubsub
   .schedule('every day 12:00')
   .timeZone('Asia/Tokyo')
-  .onRun(() =>
-    companiesCollectionRef.get().then(companiesSnapshot =>
-      companiesSnapshot.forEach(companyDoc =>
-        // each company
-        companyDoc.ref.collection('talents').get().then(talentsSnapshot =>
-          talentsSnapshot.forEach(async talentDoc => {
-            // each talent
-            const talentData = talentDoc.data()
-            if (talentData.completedAt) return // リファレンスチェックが完了している
-            if (talentData.isUnsubscribeRemind) return // リマインドメールの配信停止を希望している
+  .onRun(async () => {
+    const companiesSnapshot = await companiesCollectionRef.get()
+    const eachCompanyPromises = companiesSnapshot.docs.map(async companyDoc => {
+      // each company
+      const talentsSnapshot = await companyDoc.ref.collection('talents').get()
+      const eachTalentPromises = talentsSnapshot.docs.map(async talentDoc => {
+        // each talent
+        const talentData = talentDoc.data()
+        if (talentData.completedAt) return // リファレンスチェックが完了している
+        if (talentData.isUnsubscribeRemind) return // リマインドメールの配信停止を希望している
 
-            const refereesSnapshot = await talentDoc.ref.collection('referees').get()
-            // 推薦者を1人も登録していない場合
-            if (refereesSnapshot.docs.length === 0 && shouldRemindDate(talentData.deadline.toDate())) {
-              console.log(`send remind to talent: ${talentDoc.ref.path}`)
-              return sendRemindToTalent({
-                companyName: companyDoc.data().name,
-                companyId: companyDoc.id,
-                talentId: talentDoc.id,
-                talentData,
-              }).catch(console.error)
-            }
+        const refereesSnapshot = await talentDoc.ref.collection('referees').get()
+        // 推薦者を1人も登録していない場合
+        if (refereesSnapshot.docs.length === 0 && shouldRemindDate(talentData.deadline.toDate())) {
+          functions.logger.log(`send remind to talent: ${talentDoc.ref.path}`)
+          await sendRemindToTalent({
+            companyName: companyDoc.data().name,
+            companyId: companyDoc.id,
+            talentId: talentDoc.id,
+            talentData,
+          }).catch(functions.logger.error)
+          return
+        }
 
-            // everyは空の配列に対して呼び出すとtrueを返すことに注意
-            const isAllRefereesCompleted = refereesSnapshot.docs.every(refereeDoc => Boolean(refereeDoc.data().completedAt))
-            if (isAllRefereesCompleted) {
-              // すべての推薦者がリファレンスチェックを終えている場合
-              return talentDoc.ref.update({ completedAt: new Date() })
-            }
+        // everyは空の配列に対して呼び出すとtrueを返すことに注意
+        const isAllRefereesCompleted = refereesSnapshot.docs.every(refereeDoc => Boolean(refereeDoc.data().completedAt))
+        if (isAllRefereesCompleted) {
+          // すべての推薦者がリファレンスチェックを終えている場合
+          await talentDoc.ref.update({ completedAt: new Date() })
+          return
+        }
 
-            // リファレンスチェックを終えていない推薦者がいる場合
-            refereesSnapshot.docs.forEach(async refereeDoc => {
-              const refereeData = refereeDoc.data()
-              if (refereeData.completedAt) return
-              if (refereeData.isUnsubscribeRemind) return // リマインドメールの配信停止を希望している
+        // リファレンスチェックを終えていない推薦者がいる場合
+        const eachRefereePromises = refereesSnapshot.docs.map(async refereeDoc => {
+          const refereeData = refereeDoc.data()
+          if (refereeData.completedAt) return
+          if (refereeData.isUnsubscribeRemind) return // リマインドメールの配信停止を希望している
 
-              if (shouldRemindDate(talentData.deadline.toDate())) {
-                console.log(`send remind to referee: ${refereeDoc.ref.path}`)
-                // リファレンスチェックを終えていない かつ 条件を満たしている場合
-                return sendRemindToReferee({
-                  companyId: companyDoc.id,
-                  talentId: talentDoc.id,
-                  refereeId: refereeDoc.id,
-                  talentData,
-                  refereeData
-                }).catch(console.error)
-              }
-            })
-          })
-        ).catch(console.error)
-      )
-    ).catch(console.error)
-  )
+          if (shouldRemindDate(talentData.deadline.toDate())) {
+            functions.logger.log(`send remind to referee: ${refereeDoc.ref.path}`)
+            // リファレンスチェックを終えていない かつ 条件を満たしている場合
+            await sendRemindToReferee({
+              companyId: companyDoc.id,
+              talentId: talentDoc.id,
+              refereeId: refereeDoc.id,
+              talentData,
+              refereeData
+            }).catch(functions.logger.error)
+          }
+        })
+
+        await Promise.all(eachRefereePromises)
+      })
+
+      await Promise.all(eachTalentPromises)
+    })
+
+    await Promise.all(eachCompanyPromises)
+  })
 
 /**
  * 当日がリマインドを行うべき日付かを判定する関数。
