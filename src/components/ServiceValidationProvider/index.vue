@@ -87,7 +87,7 @@ export default {
     showModal() {
       if (this.loading) return false
       if (this.isAdmin) return false
-      if (!this.isVerified) return true
+      if (!this.isVerified) return true   ///!this.isVerified
       if (!this.isTrial && !this.isCardValid) {
         if (this.$route.name === 'configCard') return false
         else return true

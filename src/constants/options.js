@@ -503,7 +503,8 @@ export const getAppliedSiteOptions = () => {
     { label: 'JAC Recruitment', value: 'jacRecruitment' },
     { label: 'シリコンスタジオ', value: 'siliconStudio' },
     { label: 'イマジカデジタルスケープ', value: 'imagicaDigitalscape' },
-    { label: 'みんせつ', value: 'minsetsu' }
+    { label: 'みんせつ', value: 'minsetsu' },
+    { label: 'synca', value: 'synca' }
   ]
 
   return [...other, ...agents.sort((a, b) => (a.value < b.value ? -1 : 1))]
