@@ -37,10 +37,9 @@
         <template slot-scope="{ row }">
           <span v-if="row.uid">パスワード設定済み</span>
           <span v-else>
-            <el-button
-              :disabled="isSubAccount"
-              @click="sendMail(row.id)"
-            >メール再送</el-button>
+            <el-button :disabled="isSubAccount" @click="sendMail(row.id)"
+              >メール再送</el-button
+            >
           </span>
         </template>
       </el-table-column>
@@ -77,17 +76,17 @@
 </template>
 
 <script>
-import { useCompany, updateSubAccount } from '@/utils/hooks/firestore'
-import { mapGetters } from 'vuex'
-import { functions, companiesCollectionRef } from '@/plugins/firebase'
-import dayjs from 'dayjs'
-import pick from 'lodash/pick'
-import AddSubAccountModal from '@/components/subAccountModal/add'
-import EditSubAccountModal from '@/components/subAccountModal/edit'
-import * as Sentry from '@sentry/vue'
+import { useCompany, updateSubAccount } from "@/utils/hooks/firestore";
+import { mapGetters } from "vuex";
+import { functions, companiesCollectionRef } from "@/plugins/firebase";
+import dayjs from "dayjs";
+import pick from "lodash/pick";
+import AddSubAccountModal from "@/components/subAccountModal/add";
+import EditSubAccountModal from "@/components/subAccountModal/edit";
+import * as Sentry from "@sentry/vue";
 
 export default {
-  name: 'CompanyAccounts',
+  name: "CompanyAccounts",
   components: { AddSubAccountModal, EditSubAccountModal },
   data() {
     return {
@@ -96,182 +95,202 @@ export default {
       selectedSubAccount: {},
       loading: false,
       subAccounts: [],
-      unsubscribe: () => {}
-    }
+      unsubscribe: () => {},
+    };
   },
   computed: {
-    ...mapGetters(['user', 'companyId', 'isSubAccount'])
+    ...mapGetters(["user", "companyId", "isSubAccount"]),
   },
   async created() {
-    this.loading = true
+    this.loading = true;
     const { companyDocumentSnapshot } = await useCompany({
-      companyId: this.companyId
-    })
+      companyId: this.companyId,
+    });
     const subAccountsQuery = companyDocumentSnapshot.ref
-      .collection('subAccounts')
-      .orderBy('createdAt', 'asc')
+      .collection("subAccounts")
+      .orderBy("createdAt", "asc");
     this.unsubscribe = subAccountsQuery.onSnapshot((snapshot) => {
       snapshot.docChanges().forEach((change) => {
         switch (change.type) {
-          case 'added': // 初回取得時 or データ追加時
+          case "added": // 初回取得時 or データ追加時
             this.subAccounts.unshift({
               ...change.doc.data(),
-              id: change.doc.id
-            })
-            break
-          case 'modified':
+              id: change.doc.id,
+            });
+            break;
+          case "modified":
             Object.assign(
               this.subAccounts.find(({ id }) => id === change.doc.id) || {},
               change.doc.data()
-            )
-            break
-          case 'removed':
+            );
+            break;
+          case "removed":
             this.subAccounts.splice(
               this.subAccounts
                 .map((target) => target.id)
                 .indexOf(change.doc.id),
               1
-            )
-            break
+            );
+            break;
         }
-      })
-    })
-    this.loading = false
+      });
+    });
+    this.loading = false;
   },
   beforeDestroy() {
-    this.unsubscribe()
+    this.unsubscribe();
   },
   methods: {
     dayjs,
     setEditing(subAccount) {
       this.selectedSubAccount = pick(subAccount, [
-        'id',
-        'name',
-        'email',
-        'department'
-      ])
-      this.isEditModalOpen = true
+        "id",
+        "name",
+        "email",
+        "department",
+      ]);
+      this.isEditModalOpen = true;
     },
     unsetEditing() {
-      this.selectedSubAccount = {}
-      this.isEditModalOpen = false
+      this.selectedSubAccount = {};
+      this.isEditModalOpen = false;
     },
     sendMail(subAccountId) {
-      this.loading = true
+      this.loading = true;
       functions
-        .httpsCallable('notifySubAccountToSetPassword')({
+        .httpsCallable("notifySubAccountToSetPassword")({
           companyId: this.companyId,
-          subAccountId
+          subAccountId,
         })
         .then(() => {
           this.$notify({
-            title: 'Success',
+            title: "Success",
             message:
-              '企業担当者の追加に成功しました。パスワード設定メールを指定のメールアドレスに送信しました。',
-            type: 'success'
-          })
+              "企業担当者の追加に成功しました。パスワード設定メールを指定のメールアドレスに送信しました。",
+            type: "success",
+          });
         })
         .catch((err) => {
-          Sentry.captureException(new Error(err))
+          Sentry.captureException(new Error(err));
           this.$notify({
-            type: 'error',
-            title: 'Error',
+            type: "error",
+            title: "Error",
             message:
-              'ネットワークエラーが発生しました。通信環境を確認したうえで再度お試しください。'
-          })
+              "ネットワークエラーが発生しました。通信環境を確認したうえで再度お試しください。",
+          });
         })
         .finally(() => {
-          this.loading = false
-        })
+          this.loading = false;
+        });
     },
     toggleAccountDisabled(subAccountId, uid, isBanned) {
       // アカウントを既に無効にされている場合は有効に
       // 有効の場合は無効に
-      this.loading = true
-      const bannedAt = isBanned ? null : new Date()
+      this.loading = true;
+      const bannedAt = isBanned ? null : new Date();
       Promise.all([
         updateSubAccount({
           companyId: this.companyId,
           subAccountId,
-          data: { bannedAt }
+          data: { bannedAt },
         }),
-        functions.httpsCallable('toggleAuthDisabled')({
+        functions.httpsCallable("toggleAuthDisabled")({
           disabledValue: !isBanned,
-          subAccountUid: uid
-        })
+          subAccountUid: uid,
+        }),
       ])
         .then(() => {
           this.$notify({
-            type: 'success',
-            title: 'Success',
+            type: "success",
+            title: "Success",
             message: `該当アカウントを${
-              isBanned ? '有効' : '無効'
-            }にしました。`
-          })
-          this.loading = false
+              isBanned ? "有効" : "無効"
+            }にしました。`,
+          });
+          this.loading = false;
         })
         .catch((err) => {
-          Sentry.captureException(new Error(err))
+          Sentry.captureException(new Error(err));
           this.$notify({
-            type: 'error',
-            title: 'Error',
+            type: "error",
+            title: "Error",
             message:
-              '処理に失敗しました。通信環境を確認したうえで再度お試しください。'
-          })
-          this.loading = false
-        })
+              "処理に失敗しました。通信環境を確認したうえで再度お試しください。",
+          });
+          this.loading = false;
+        });
     },
     async deleteSubAccount(id, uid) {
       await this.$confirm(
-        'このアカウントを完全に削除します。<br>よろしいですか？',
+        "このアカウントを完全に削除します。<br>よろしいですか？",
         {
-          confirmButtonText: 'はい',
-          cancelButtonText: 'いいえ',
-          type: 'warning',
-          dangerouslyUseHTMLString: true
+          confirmButtonText: "はい",
+          cancelButtonText: "いいえ",
+          type: "warning",
+          dangerouslyUseHTMLString: true,
         }
-      )
-      this.loading = true
+      );
+      this.loading = true;
       try {
         if (uid) {
           await Promise.all([
-            functions.httpsCallable('deleteFromSubAccountUids')({
+            functions.httpsCallable("deleteFromSubAccountUids")({
               companyId: this.companyId,
-              uid
+              uid,
             }),
-            functions.httpsCallable('toggleAuthDisabled')({
+            functions.httpsCallable("toggleAuthDisabled")({
               disabledValue: true,
-              subAccountUid: uid
-            })
-          ])
+              subAccountUid: uid,
+            }),
+          ]);
         }
         await companiesCollectionRef
           .doc(this.companyId)
-          .collection('subAccounts')
+          .collection("subAccounts")
           .doc(id)
-          .delete()
+          .delete();
         this.$notify({
-          type: 'success',
-          title: 'Success',
-          message: 'アカウントを完全に削除しました。'
-        })
+          type: "success",
+          title: "Success",
+          message: "アカウントを完全に削除しました。",
+        });
       } catch (err) {
-        Sentry.captureException(new Error(err))
+        Sentry.captureException(new Error(err));
         this.$notify({
-          type: 'error',
-          title: 'Error',
+          type: "error",
+          title: "Error",
           message:
-            '処理に失敗しました。通信環境を確認したうえで再度お試しください。'
-        })
+            "処理に失敗しました。通信環境を確認したうえで再度お試しください。",
+        });
       } finally {
-        this.loading = false
+        this.loading = false;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 <style lang="sass" scoped>
+/deep/ .el-row
 .container
   width: 90%
   margin: auto
+  .row
+    margin-bottom: 30px
+
+.el-col
+  .detail-text
+    margin-left: 5px
+    margin-bottom: 0
+    color: grey
+    font-size: 0.8em
+
+/deep/ .el-input
+  .el-input__inner
+    border-radius: 0px
+    border: 1px solid #0a5ab2
+/deep/ .el-textarea    
+  .el-textarea__inner
+    border-radius: 0px
+    border: 1px solid #0a5ab2
+    height: 100px
 </style>

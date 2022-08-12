@@ -26,6 +26,7 @@ import VueMq from 'vue-mq' // PCかモバイルを判断
 import * as Sentry from '@sentry/vue'
 import { Integrations } from '@sentry/tracing'
 
+
 Sentry.init({
   Vue,
   dsn: process.env.ENV === 'production' ? process.env.VUE_APP_SENTRY_DSN : false,
