@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "mikiwame-dev",
+    "default": "mikiwame-prod",
     "dev": "mikiwame-dev",
     "iuchi": "mikiwame-iuchi"
   }

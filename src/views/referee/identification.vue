@@ -1,18 +1,22 @@
 <template>
   <div v-loading="loading">
     <el-card>
-      <p style="font-weight: bold">{{ refereeI18n.t('message.pleaseUploadBusinessCards') }}</p>
-      <p>{{ refereeI18n.t('message.pleasePreventIdentityTheft') }}</p>
-      <p><span style="color: tomato; margin-right: 1rem"><i class="el-icon-warning" />{{ commonI18n.t('message.caution') }}</span>{{ refereeI18n.t('message.yourNameOnTheFront') }}</p>
-      <el-upload action="" :http-request="upload" accept="image/*" :show-file-list="false">
-        <el-button><i class="el-icon-top" />{{ refereeI18n.t('message.uploadPicture') }}</el-button>
-      </el-upload>
-      <p v-if="uploadedImages.src === null">{{ refereeI18n.t('message.notSelected') }}</p>
-      <img v-else :src="uploadedImages.src" class="upload-img" width="400" style="margin: 1rem">
-      <div style="text-align: center">
-        <el-button @click="onClickBack"><i class="el-icon-back" />{{ refereeI18n.t('message.modifyYourAnswer') }}</el-button>
-        <el-button type="primary" :disabled="disableGoNextButton" @click="save">{{ refereeI18n.t('message.registerAndContinue') }}</el-button>
+      <p style="font-weight: bold">{{ refereeI18n.t('message.pleaseUploadProofImage') }}</p>
+      <p>{{ refereeI18n.t('message.referenceCheckComplete') }}</p>
+      <span style="color: tomato; font-weight: bold">{{ refereeI18n.t('message.presentingExamples') }}</span>
+      <div style="padding-left:12px;">
+        <p style="line-height:1.7; margin-top: 5px; margin-bottom: 20px;">{{refereeI18n.t('message.hideLicenseNumberAndAddress') }}<br/>{{refereeI18n.t('message.submitProofOfIdentity')}}<br/>{{refereeI18n.t('message.pleaseHelpPreventIdentityTheft')}}</p>
+        <el-upload action="" :http-request="upload" accept="image/*" :show-file-list="false">
+          <el-button><i class="el-icon-top" />{{ refereeI18n.t('message.uploadPicture') }}</el-button>
+        </el-upload>
+        <p v-if="uploadedImages.src === null">{{ refereeI18n.t('message.notSelected') }}</p>
+        <img v-else :src="uploadedImages.src" class="upload-img" width="400" style="margin: 1rem">
+        <div style="text-align: center">
+          <el-button @click="onClickBack"><i class="el-icon-back" />{{ refereeI18n.t('message.modifyYourAnswer') }}</el-button>
+          <el-button type="primary" :disabled="disableGoNextButton" @click="save">{{ refereeI18n.t('message.registerAndContinue') }}</el-button>
+        </div>
       </div>
+      <p class="asterisk">{{ refereeI18n.t('message.completelyDeletedAfterCertainPeriod') }}</p>
     </el-card>
   </div>
 </template>
@@ -104,6 +108,16 @@ export default {
 .upload-img {
   @media (max-width: 500px) {
     width: 90%;
+  }
+}
+.asterisk{
+  padding-left: 1rem;
+  margin-top:50px;
+  &::before{
+    content:"※";
+    margin-left:-1rem;
+    font-size: 18px;
+    vertical-align:text-bottom;
   }
 }
 </style>

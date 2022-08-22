@@ -4,11 +4,14 @@
     :visible="isUpdateModalOpen"
     :before-close="onClose"
     style="text-align: center"
+    :width="$mq === 'pc' ? '60%' : '80%'"
     @update:visible="onClose"
   >
     <el-form
       ref="form"
-      label-width="8rem"
+      :label-position="$mq === 'pc' ? 'right' : 'top'"
+      :label-width="$mq === 'pc' ? '10rem' : '20rem'"
+      :style="$mq === 'pc' ? '' : 'text-align: left'"
       :model="form"
       :disabled="loading"
       :rules="rules"
@@ -19,6 +22,89 @@
 
       <el-form-item label="メールアドレス" prop="email">
         <el-input v-model="form.email" placeholder="info@mikiwame-p.jp" />
+      </el-form-item>
+
+      <el-form-item label="電話番号">
+        <el-row :gutter="10">
+          <el-col :span="6">
+            <span class="demonstration">国際コード</span>
+          </el-col>
+          <el-col :span="10">
+            <span class="demonstration">電話番号（ハイフンなし）</span>
+          </el-col>
+        </el-row>
+        <el-row :gutter="10">
+          <el-col :span="6">
+            <el-form-item prop="countryCode">
+              <el-input v-model="form.countryCode" placeholder="国際コード" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item prop="phoneNumber">
+              <el-input
+                v-model="form.phoneNumber"
+                placeholder="電話番号を入力してください"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form-item>
+
+      <el-form-item label="言語" style="text-align: left">
+        <el-radio-group v-model="form.language">
+          <el-radio
+            v-for="(option, i) in options.questionsLang"
+            :key="i"
+            :label="option.value"
+          >
+            {{ option.label }}
+          </el-radio>
+        </el-radio-group>
+      </el-form-item>
+
+      <el-form-item label="現在の会社" prop="currentCompany">
+        <el-input
+          v-model="form.currentCompany"
+          placeholder="会社名を入力して下さい"
+        />
+      </el-form-item>
+
+      <el-form-item
+        label="候補者の現在の職種"
+        prop="currentJobCategory"
+        style="text-align: left"
+      >
+        <el-cascader
+          v-model="form.currentJobCategory"
+          :options="options.jobCategoryOptions"
+          placeholder="選択してください"
+        />
+      </el-form-item>
+
+      <el-form-item
+        label="応募媒体"
+        prop="siteWhereTalentApplied"
+        style="text-align: left"
+      >
+        <el-select
+          v-model="form.siteWhereTalentApplied"
+          filterable
+          placeholder="選択してください"
+        >
+          <el-option
+            v-for="agent in options.appliedSiteOptions"
+            :key="agent.value"
+            :label="agent.label"
+            :value="agent.value"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="企業担当者" prop="recruitmentOfficer">
+        <el-input
+          v-model="form.recruitmentOfficer"
+          placeholder="企業担当者を入力してください"
+        />
       </el-form-item>
 
       <el-form-item label="締め切り" style="text-align: left" prop="deadline">
@@ -91,22 +177,20 @@
           icon="el-icon-plus"
           style="float: right"
           @click="addRefereeBreakdown"
-        >内訳を追加</el-button>
+          >内訳を追加</el-button
+        >
       </el-form-item>
 
       <el-form-item label="URL" style="display: none">
         <el-input :value="URL" readonly />
       </el-form-item>
 
-      <el-button
-        :loading="loading"
-        @click="onCancelEdit"
-      >編集をキャンセル</el-button>
-      <el-button
-        :loading="loading"
-        type="primary"
-        @click="onSubmit"
-      >更新</el-button>
+      <el-button :loading="loading" @click="onCancelEdit"
+        >編集をキャンセル</el-button
+      >
+      <el-button :loading="loading" type="primary" @click="onSubmit"
+        >更新</el-button
+      >
     </el-form>
   </el-dialog>
 </template>
@@ -121,7 +205,10 @@ import {
 } from '@/utils/referee_breakdown'
 import {
   getRelationshipOptionsByLang,
-  getTimeWorkingOptionsByLang
+  getTimeWorkingOptionsByLang,
+  getJobCategoryOptionsByLang,
+  getAppliedSiteOptions,
+  getQuestionsLangByLang
 } from '@/constants/options'
 import * as Sentry from '@sentry/vue'
 
@@ -134,6 +221,10 @@ export default {
       default: () => ({
         name: '',
         email: '',
+        currentCompany: '', // add
+        currentJobCategory: '', // add
+        siteWhereTalentApplied: '', // add
+        recruitmentOfficer: '', // add
         id: '',
         deadline: new Date(),
         refereeBreakdown: [
@@ -169,7 +260,12 @@ export default {
     form: {
       name: '',
       email: '',
+      currentCompany: '',
+      currentJobCategory: '',
+      siteWhereTalentApplied: [],
+      recruitmentOfficer: '',
       deadline: null,
+      language: 'jp',
       refereeBreakdown: [
         {
           relationship: '',
@@ -212,11 +308,45 @@ export default {
           message: '締め切りを選択してください',
           trigger: 'blur'
         }
+      ],
+      countryCode: [
+        {
+          pattern: /(\+[0-9]{1,4})$/,
+          message: '国際コードの形式が無効です',
+          trigger: 'blur'
+        }
+      ],
+      phoneNumber: [
+        {
+          pattern: /^[0-9]{9,11}$/,
+          message: '9-11桁の半角数字を入力してください',
+          trigger: 'blur'
+        }
+      ],
+      currentCompany: [
+        {
+          required: true,
+          message: '会社名を入力して下さい',
+          trigger: 'blur'
+        }
+      ],
+      currentJobCategory: [
+        { required: true, message: '職種を選択してください', trigger: 'blur' }
+      ],
+      siteWhereTalentApplied: [
+        {
+          required: true,
+          message: '候補者が応募した媒体を選択してください',
+          trigger: 'blur'
+        }
       ]
     }),
     options: () => ({
       relationshipOptions: getRelationshipOptionsByLang(),
-      timeWorkingOptions: getTimeWorkingOptionsByLang()
+      timeWorkingOptions: getTimeWorkingOptionsByLang(),
+      jobCategoryOptions: getJobCategoryOptionsByLang(),
+      appliedSiteOptions: getAppliedSiteOptions(),
+      questionsLang: getQuestionsLangByLang()
     })
   },
   watch: {
@@ -225,17 +355,26 @@ export default {
     }
   },
   methods: {
+    // propsをそのままdata.form.siteWhereTalentAppliedに代入するとArrayが入りエラーになるのでvalueだけ取り出す。
+    talentAppliedChange() {
+      const appliedChange = getAppliedSiteOptions().filter(
+        talentApplied =>
+          talentApplied.value == this.talentData.siteWhereTalentApplied[0]
+      )
+      return appliedChange[0].value
+    },
     assignDataToForm() {
       this.form = {
         ...omit(this.talentData, 'ref'),
-        refereeBreakdown: this.talentData.refereeBreakdown.map((breakdown) => ({
+        refereeBreakdown: this.talentData.refereeBreakdown.map(breakdown => ({
           ...breakdown,
           registeredRefereesNum: calculateRegisteredRefereesNum(
             this.referees,
             breakdown
           )
         })),
-        deadline: this.talentData.deadline?.toDate()
+        deadline: this.talentData.deadline?.toDate(),
+        siteWhereTalentApplied: this.talentAppliedChange()
       }
     },
     // 推薦者の内訳を追加
@@ -277,13 +416,14 @@ export default {
         talentId: this.talentData.id,
         data: {
           ...this.form,
-          refereeBreakdown: this.form.refereeBreakdown.map((breakdown) => ({
+          refereeBreakdown: this.form.refereeBreakdown.map(breakdown => ({
             ...omit(breakdown, 'registeredRefereesNum'),
             isRelationshipSelectedByCompany: Boolean(breakdown.relationship),
             isTimeWorkingTogetherSelectedByCompany: Boolean(
               breakdown.timeWorkingTogether
             )
-          }))
+          })),
+          siteWhereTalentApplied: [this.form.siteWhereTalentApplied]
         }
       })
         .then(() => {
@@ -292,7 +432,7 @@ export default {
             type: 'success'
           })
         })
-        .catch((err) => {
+        .catch(err => {
           Sentry.captureException(new Error(err))
           this.$message({
             message:

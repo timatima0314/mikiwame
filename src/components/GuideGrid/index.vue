@@ -19,7 +19,7 @@
         <a href="https://storage.googleapis.com/mikiwame-prod.appspot.com/files/mikiwame_point_guide_for_agent.pdf" target="_blank" class="highlight-button">エージェント様・ガイド</a>
       </el-col>
       <el-col :span="8" class="container-center">
-        <a href="https://storage.googleapis.com/mikiwame-prod.appspot.com/files/mikiwame_point_guide_config.pdf" target="_blank" class="highlight-button">推薦者の名刺、Free Mail<br>有効・無効設定</a>
+        <a href="https://storage.googleapis.com/mikiwame-prod.appspot.com/files/mikiwame_point_guide_config.pdf" target="_blank" class="highlight-button">推薦者の証明画像、Free Mail<br>有効・無効設定</a>
       </el-col>
     </el-row>
     <el-row justify="space-between">

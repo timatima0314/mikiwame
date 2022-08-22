@@ -42,7 +42,7 @@
     <div v-if="!isSubAccount" class="config-switch">
       <el-row :gutter="20">
         <el-col :span="16" :offset="2">
-          推薦者の本⼈確認資料である名刺２枚が写った画像の取得設定について<br>
+          推薦者の本⼈確認資料である証明画像の取得設定について<br>
           取得する ( ON )・しない ( OFF ) <span class="switch-caution"> ※1</span>
         </el-col>
         <el-col :span="6"><el-switch v-model="form.isBusinessCardRequired" /></el-col>
@@ -70,7 +70,7 @@
     <div v-if="!isSubAccount" style="margin-top: 30px">
       <span class="caution-title">注意事項</span>
       <p>
-        ※1 本人確認名刺2枚について
+        ※1 本人確認証明画像について
         <ul>
           <li>実施されますと「なりすまし防止」に役立ちます。</li>
           <li>実施しない場合、回答の信憑性に影響が出る可能性がございます。</li>

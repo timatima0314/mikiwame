@@ -35,7 +35,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="名刺画像">
+      <el-table-column label="証明画像">
         <template v-if="row.businessCardUrl" slot-scope="{row}">
           <a :href="row.businessCardUrl" target="_blank" style="pointer-events: auto;">
             <el-button type="success" size="mini">
