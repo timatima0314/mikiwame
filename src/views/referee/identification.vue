@@ -7,23 +7,20 @@
       <span style="color: tomato; font-weight: bold; margin-top: 10px;">{{ refereeI18n.t('message.presentingExamples') }}</span>
        <div style="padding-left:20px;">
         <ul>
-            <li>{{refereeI18n.t('message.license') }}<span class="annotation">{{refereeI18n.t('message.hideLicenseNumberAndAddress')}}</span></li>
-            <li>{{refereeI18n.t('message.employeeIdCard') }}<span class="annotation">{{refereeI18n.t('message.employeeOrStudentIdCard')}}</span></li>
-            <li>{{refereeI18n.t('message.businessCard') }}<span class="annotation">{{refereeI18n.t('message.photographMultipleBusinessCardsAppear')}}</span></li>
-            <li>{{refereeI18n.t('message.other') }}<span class="annotation">{{refereeI18n.t('message.submitYourPhoto')}}</span></li>
-          </ul>
-
-
-
-          <el-upload action="" :http-request="upload" accept="image/*" :show-file-list="false">
-            <el-button><i class="el-icon-top" />{{ refereeI18n.t('message.uploadPicture') }}</el-button>
-          </el-upload>
-          <p v-if="uploadedImages.src === null">{{ refereeI18n.t('message.notSelected') }}</p>
-          <img v-else :src="uploadedImages.src" class="upload-img" width="400" style="margin: 1rem">
-          <div style="text-align: center">
-            <el-button @click="onClickBack"><i class="el-icon-back" />{{ refereeI18n.t('message.modifyYourAnswer') }}</el-button>
-            <el-button type="primary" :disabled="disableGoNextButton" @click="save">{{ refereeI18n.t('message.registerAndContinue') }}</el-button>
-          </div>
+          <li><div class="item">{{refereeI18n.t('message.license') }}</div><span class="annotation">{{refereeI18n.t('message.hideLicenseNumberAndAddress')}}</span></li>
+          <li><div class="item">{{refereeI18n.t('message.employeeIdCard') }}</div><span class="annotation">{{refereeI18n.t('message.employeeOrStudentIdCard')}}</span></li>
+          <li><div class="item">{{refereeI18n.t('message.businessCard') }}</div><span class="annotation">{{refereeI18n.t('message.photographMultipleBusinessCardsAppear')}}</span></li>
+          <li><div class="item">{{refereeI18n.t('message.other') }}</div><span class="annotation">{{refereeI18n.t('message.submitYourPhoto')}}</span></li>
+        </ul>
+        <el-upload action="" :http-request="upload" accept="image/*" :show-file-list="false">
+          <el-button><i class="el-icon-top" />{{ refereeI18n.t('message.uploadPicture') }}</el-button>
+        </el-upload>
+        <p v-if="uploadedImages.src === null">{{ refereeI18n.t('message.notSelected') }}</p>
+        <img v-else :src="uploadedImages.src" class="upload-img" width="400" style="margin: 1rem">
+        <div style="text-align: center">
+          <el-button @click="onClickBack"><i class="el-icon-back" />{{ refereeI18n.t('message.modifyYourAnswer') }}</el-button>
+          <el-button type="primary" :disabled="disableGoNextButton" @click="save">{{ refereeI18n.t('message.registerAndContinue') }}</el-button>
+        </div>
         </div>
       <p class="asterisk">{{ refereeI18n.t('message.completelyDeletedAfterCertainPeriod') }}</p>
     </el-card>
@@ -131,14 +128,22 @@ export default {
 }
 ul{
   padding: 0;
+  margin-top: 5px;
   li{
     display: flex;
     align-items: center;
     line-height: 1.5;
-      .annotation{
-        padding-left: 30px;
-        font-size: 12px;
-      }
+    @media screen and (max-width:900px) {
+      flex-direction: column;
+      align-items:normal;
+    }
+    .item{
+      min-width: 100px;
+    }
+    .annotation{
+      font-size: 12px;
+      padding-left: 15px;
+    }
   }
 }
 </style>
