@@ -54,7 +54,7 @@ const messages = {
         failedToUploadBusinessCard: '名刺のアップロードに失敗しました。通信環境を確認したうえで再度お試しください。',
         deadlinePassed: '回答期限が過ぎています。',
         modifyYourAnswer: '回答を修正する',
-        uploadedBusinessCard: '証明画像をアップロードしました', //
+        uploadedBusinessCard: '証明画像をアップロードしました', 
         registeringPhoneNumber: '電話番号の登録',
         toIncreaseSecurity: '2段階認証によりセキュリティを高めるため',
         connectYourPhoneNumberToYourAccount: 'アカウント:{account}に電話番号を紐付けます',
